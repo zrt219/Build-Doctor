@@ -7,6 +7,7 @@ export type SuiteApp = {
   githubUrl: string;
   statusEndpoint: string;
   evalEndpoint: string;
+  integrationEndpoint: string;
   demoMode: string;
   targetRoles: string[];
   proofSignals: string[];
@@ -24,6 +25,7 @@ export const suiteApps: SuiteApp[] = [
     githubUrl: "https://github.com/zrt219",
     statusEndpoint: "https://vercel-build-doctor-agent.vercel.app/api/health",
     evalEndpoint: "https://vercel-build-doctor-agent.vercel.app/api/eval",
+    integrationEndpoint: "https://vercel-build-doctor-agent.vercel.app/api/integration-health",
     demoMode: "DEMO MODE",
     targetRoles: ["OpenAI Codex", "Vercel Agent", "Grafana AI/Ops"],
     proofSignals: ["Log parsing", "Secret redaction", "Failure taxonomy", "Incident report export"],
@@ -39,6 +41,7 @@ export const suiteApps: SuiteApp[] = [
     githubUrl: "https://github.com/zrt219",
     statusEndpoint: "https://ai-gateway-failover-playground.vercel.app/api/health",
     evalEndpoint: "https://ai-gateway-failover-playground.vercel.app/api/eval",
+    integrationEndpoint: "https://ai-gateway-failover-playground.vercel.app/api/integration-health",
     demoMode: "DEMO PROVIDER MOCKS",
     targetRoles: ["Vercel AI Gateway", "Platform AI Infra", "AI SDK"],
     proofSignals: ["Provider policy", "Fallback trace", "Latency/cost dashboard", "Circuit breakers"],
@@ -54,6 +57,7 @@ export const suiteApps: SuiteApp[] = [
     githubUrl: "https://github.com/zrt219",
     statusEndpoint: "https://enterprise-agent-workflow-studio.vercel.app/api/health",
     evalEndpoint: "https://enterprise-agent-workflow-studio.vercel.app/api/eval",
+    integrationEndpoint: "https://enterprise-agent-workflow-studio.vercel.app/api/integration-health",
     demoMode: "DEMO LOCAL ONLY",
     targetRoles: ["Cohere Agentic Workflows", "Anthropic Enterprise", "PointClickCare Autonomous Agent"],
     proofSignals: ["Tool registry", "Approval gates", "Agent graph", "Audit report"],
@@ -69,6 +73,7 @@ export const suiteApps: SuiteApp[] = [
     githubUrl: "https://github.com/zrt219",
     statusEndpoint: "https://resume-evidence-rag-auditor.vercel.app/api/health",
     evalEndpoint: "https://resume-evidence-rag-auditor.vercel.app/api/eval",
+    integrationEndpoint: "https://resume-evidence-rag-auditor.vercel.app/api/integration-health",
     demoMode: "DEMO JSON RETRIEVAL",
     targetRoles: ["Applied AI", "RAG Engineer", "Customer-facing AI Engineer"],
     proofSignals: ["Evidence retrieval", "Claim verification", "Gap flags", "Grounded bullet export"],

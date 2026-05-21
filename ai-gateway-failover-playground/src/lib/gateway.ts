@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getOpenRouterConfig } from "./integrations";
 
 export const chatRequestSchema = z.object({
   prompt: z.string().min(3).max(4000).default("Summarize the deployment failure and choose the lowest-risk provider."),
@@ -83,6 +84,60 @@ export function routeRequest(input: ChatRequest) {
       "Provider adapter behavior is deterministic.",
       "Fallback decisions are auditable in the request trace.",
     ],
+  };
+}
+
+export async function routeRequestWithOpenRouter(input: ChatRequest, fetchImpl: typeof fetch = fetch) {
+  const routed = routeRequest(input);
+  const config = chatRequestSchema.parse(input);
+  const openRouter = getOpenRouterConfig();
+
+  if (!openRouter.configured || !openRouter.apiKey) {
+    return {
+      ...routed,
+      providerMode: "MOCK_FALLBACK" as const,
+      openRouter: {
+        configured: false,
+        model: openRouter.model,
+        status: "SKIPPED",
+        reason: "OPENROUTER_API_KEY is not configured; deterministic provider routing returned instead.",
+      },
+    };
+  }
+
+  const response = await fetchImpl("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${openRouter.apiKey}`,
+      "content-type": "application/json",
+      "http-referer": "https://ai-gateway-failover-playground.vercel.app",
+      "x-title": "ZRT AI Gateway Failover Playground",
+    },
+    body: JSON.stringify({
+      model: openRouter.model,
+      messages: [
+        { role: "system", content: "You are a concise AI gateway test responder. Do not reveal secrets. Summarize the routing decision." },
+        { role: "user", content: `${config.prompt}\n\nDeterministic route: ${routed.provider.label}; scenario: ${config.scenario}; policy: ${config.policy}.` },
+      ],
+      max_tokens: 180,
+      temperature: 0.2,
+    }),
+  });
+
+  const body = await response.json().catch(() => null) as { choices?: Array<{ message?: { content?: string } }>; error?: { message?: string } } | null;
+  const content = body?.choices?.[0]?.message?.content;
+
+  return {
+    ...routed,
+    providerMode: response.ok ? "OPENROUTER_LIVE" as const : "MOCK_FALLBACK" as const,
+    response: response.ok && content ? content : routed.response,
+    openRouter: {
+      configured: true,
+      model: openRouter.model,
+      status: response.ok ? "PASS" : "REVIEW",
+      httpStatus: response.status,
+      reason: response.ok ? "OpenRouter chat completion returned a response." : body?.error?.message ?? "OpenRouter request failed; deterministic fallback response returned.",
+    },
   };
 }
 

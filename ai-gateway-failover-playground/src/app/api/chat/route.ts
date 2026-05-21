@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { chatRequestSchema, routeRequest } from "@/lib/gateway";
+import { chatRequestSchema, routeRequestWithOpenRouter } from "@/lib/gateway";
 
 export const runtime = "edge";
 
@@ -9,5 +9,5 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "INVALID_CHAT_REQUEST", issues: parsed.error.issues }, { status: 400 });
   }
-  return NextResponse.json(routeRequest(parsed.data));
+  return NextResponse.json(await routeRequestWithOpenRouter(parsed.data));
 }

@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { routeRequest, runEvalSuite } from "@/lib/gateway";
+import { describe, expect, it, vi } from "vitest";
+import { routeRequest, routeRequestWithOpenRouter, runEvalSuite } from "@/lib/gateway";
+import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
 
 describe("AI Gateway Failover Playground", () => {
   it("routes normal balanced requests without fallback", () => {
@@ -27,5 +28,46 @@ describe("AI Gateway Failover Playground", () => {
 
   it("passes eval fixtures", () => {
     expect(runEvalSuite().score).toBe(100);
+  });
+
+  it("uses OpenRouter fallback when no API key is configured", async () => {
+    const previous = process.env.OPENROUTER_API_KEY;
+    delete process.env.OPENROUTER_API_KEY;
+    const result = await routeRequestWithOpenRouter({ prompt: "hello", scenario: "normal", policy: "balanced" });
+
+    expect(result.providerMode).toBe("MOCK_FALLBACK");
+    expect(result.openRouter.status).toBe("SKIPPED");
+    if (previous) process.env.OPENROUTER_API_KEY = previous;
+  });
+
+  it("parses a live OpenRouter-compatible response shape", async () => {
+    const previous = process.env.OPENROUTER_API_KEY;
+    process.env.OPENROUTER_API_KEY = "test-key";
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ choices: [{ message: { content: "OpenRouter test response" } }] }), { status: 200 })) as unknown as typeof fetch;
+
+    const result = await routeRequestWithOpenRouter({ prompt: "hello", scenario: "normal", policy: "balanced" }, fetchMock);
+
+    expect(result.providerMode).toBe("OPENROUTER_LIVE");
+    expect(result.response).toBe("OpenRouter test response");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    if (previous) process.env.OPENROUTER_API_KEY = previous;
+    else delete process.env.OPENROUTER_API_KEY;
+  });
+
+  it("reports integration fallback safely", async () => {
+    const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const previousKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const previousService = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const health = getIntegrationHealth("ai-gateway-test");
+    const event = await recordSuiteEvent({ app: "ai-gateway-test", eventType: "test", summary: "fallback check" });
+
+    expect(health.supabase.mode).toBe("DETERMINISTIC_FALLBACK");
+    expect(event.stored).toBe(false);
+    if (previousUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
+    if (previousKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousKey;
+    if (previousService) process.env.SUPABASE_SERVICE_ROLE_KEY = previousService;
   });
 });

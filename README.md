@@ -9,6 +9,15 @@ The production root route is now the connected suite hub for four separate Verce
 
 Every app keeps GitHub as the first proof link: `https://github.com/zrt219`.
 
+Reviewer packet: `REVIEWER_PACKET.md`.
+
+Integration proof routes:
+
+- `/api/integration-health`
+- `https://enterprise-agent-workflow-studio.vercel.app/api/integration-health`
+- `https://ai-gateway-failover-playground.vercel.app/api/integration-health`
+- `https://resume-evidence-rag-auditor.vercel.app/api/integration-health`
+
 # Vercel Build Doctor Agent
 
 ## What It Does
@@ -123,6 +132,16 @@ The deterministic demo works with no provider keys. Optional keys can be added l
 OPENAI_API_KEY=
 AI_GATEWAY_API_KEY=
 BUILD_DOCTOR_MODEL=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+AI Gateway also supports:
+
+```txt
+OPENROUTER_API_KEY=
+OPENROUTER_MODEL=openai/gpt-4o-mini
 ```
 
 ## Deploy to Vercel
@@ -144,11 +163,13 @@ No `.env` file should be committed.
 
 ## Screenshots
 
-Add screenshots after a verified visual QA pass:
+Screenshots are stored under `screenshots/` after the final visual QA pass:
 
-- Main diagnosis screen
-- Generated incident report
-- Case study eval section
+- `screenshots/suite-hub.png`
+- `screenshots/build-doctor.png`
+- `screenshots/ai-gateway.png`
+- `screenshots/enterprise-studio.png`
+- `screenshots/resume-auditor.png`
 
 ## Resume Bullet
 

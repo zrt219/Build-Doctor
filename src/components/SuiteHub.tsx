@@ -98,9 +98,32 @@ export function SuiteHub() {
               <a href={app.evalEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
                 Eval <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
+              <a href={app.integrationEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
+                Integration <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
             </div>
           </article>
         ))}
+      </section>
+
+      <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
+        <h2 className="text-2xl font-semibold text-white">Live Proof Checklist</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+          These links are intentionally public and secret-safe. They show route health, deterministic eval status, and whether Supabase/OpenRouter integrations are live or running in fallback mode.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          {suiteApps.map((app) => (
+            <div key={app.id} className="rounded-md border border-line bg-black/30 p-4">
+              <p className="font-semibold text-white">{app.name}</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">{app.demoMode}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a href={app.statusEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">health</a>
+                <a href={app.evalEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">eval</a>
+                <a href={app.integrationEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">integration</a>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mb-8 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">

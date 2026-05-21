@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
 import { auditResumeClaims, generateReport, runEvalSuite } from "@/lib/rag-auditor";
 
 describe("Resume Evidence RAG Auditor", () => {
@@ -27,5 +28,22 @@ describe("Resume Evidence RAG Auditor", () => {
     const audit = auditResumeClaims({ jobDescription: "RAG retrieval evals", claims: ["Built Resume Evidence RAG Auditor with retrieval and evals."] });
     expect(audit.auditedClaims[0].jobOverlap.length).toBeGreaterThan(0);
     expect(audit.tailoredBullets[0]).toContain("evidence:");
+  });
+
+  it("reports Supabase fallback mode safely", async () => {
+    const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const previousKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const previousService = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const health = getIntegrationHealth("resume-auditor-test");
+    const event = await recordSuiteEvent({ app: "resume-auditor-test", eventType: "test", summary: "fallback check" });
+
+    expect(health.supabase.mode).toBe("DETERMINISTIC_FALLBACK");
+    expect(event.stored).toBe(false);
+    if (previousUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
+    if (previousKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousKey;
+    if (previousService) process.env.SUPABASE_SERVICE_ROLE_KEY = previousService;
   });
 });

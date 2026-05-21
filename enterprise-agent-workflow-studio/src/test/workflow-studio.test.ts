@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
 import { generateAuditReport, generateWorkflow, runEvalSuite } from "@/lib/workflow-studio";
 
 describe("Enterprise Agent Workflow Studio", () => {
@@ -26,5 +27,22 @@ describe("Enterprise Agent Workflow Studio", () => {
     const report = generateAuditReport(generateWorkflow({ objective: "Update a case with approval", selectedTools: ["ticket_update"], riskLevel: "medium" }));
     expect(report).toContain("Enterprise Agent Workflow Audit Report");
     expect(report).toContain("Approval Gates");
+  });
+
+  it("reports Supabase fallback mode safely", async () => {
+    const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const previousKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const previousService = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const health = getIntegrationHealth("enterprise-test");
+    const event = await recordSuiteEvent({ app: "enterprise-test", eventType: "test", summary: "fallback check" });
+
+    expect(health.supabase.mode).toBe("DETERMINISTIC_FALLBACK");
+    expect(event.stored).toBe(false);
+    if (previousUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
+    if (previousKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousKey;
+    if (previousService) process.env.SUPABASE_SERVICE_ROLE_KEY = previousService;
   });
 });
