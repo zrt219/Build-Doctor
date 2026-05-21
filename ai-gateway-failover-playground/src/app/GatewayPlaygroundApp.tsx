@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, ExternalLink, Gauge, RadioTower, ShieldAlert } from "lucide-react";
+import { ArrowRight, ExternalLink, Gauge, Info, RadioTower, ShieldAlert } from "lucide-react";
 import { circuitBreakers, providers, routeRequest, type ChatRequest } from "@/lib/gateway";
 import { socialLinks } from "@/lib/social";
 import { suiteLinks, suiteProof } from "@/lib/suite";
@@ -12,6 +12,20 @@ const scenarioNotes: Record<NonNullable<ChatRequest["scenario"]>, string> = {
   rate_limited: "Fast provider is synthetically rate-limited; trace should explain fallback.",
   cost_guardrail: "Cost policy prefers cheaper adapters and records budget tradeoffs.",
 };
+
+function InfoTip({ label, children }: { label: string; children: string }) {
+  return (
+    <span className="help-tip">
+      <span className="help-icon" tabIndex={0} role="note" aria-label={`${label}: ${children}`}>
+        <Info size={13} aria-hidden="true" />
+      </span>
+      <span className="help-bubble">
+        <span className="help-title">{label}</span>
+        {children}
+      </span>
+    </span>
+  );
+}
 
 export function GatewayPlaygroundApp() {
   const [scenario, setScenario] = useState<ChatRequest["scenario"]>("primary_outage");
@@ -45,15 +59,19 @@ export function GatewayPlaygroundApp() {
           <span className="chip review">DEMO PROVIDER MOCKS</span>
           <h1 style={{ fontSize: 48, lineHeight: 1, margin: "24px 0 16px" }}>Exercise provider routing, fallback, and budgets before production scale exists.</h1>
           <p className="muted" style={{ fontSize: 18, lineHeight: 1.65 }}>Unified `/api/chat` simulation with routing policies, outage scenarios, latency and cost budgets, circuit breakers, and an auditable request trace.</p>
+          <div className="plain-panel">
+            <div className="muted mono" style={{ fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase" }}>Plain English</div>
+            <p className="muted" style={{ marginBottom: 0 }}>This demo shows how an app can pick a backup AI provider when the first choice is too slow, too expensive, down, or rate-limited.</p>
+          </div>
           <div className="nav" style={{ marginTop: 18 }}>{suiteProof.map((item) => <span key={item} className="chip pass">{item}</span>)}</div>
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Selected Route</h2>
+          <h2>Selected Route <InfoTip label="Route">The provider the gateway chose for this simulated request.</InfoTip></h2>
           <div className="grid two">
-            <div className="metric"><span className="muted">Provider</span><strong>{routed.provider.label}</strong></div>
-            <div className="metric"><span className="muted">Readiness</span><strong>{routed.readiness.status}</strong></div>
-            <div className="metric"><span className="muted">Latency</span><strong>{routed.dashboard.latencyMs}ms</strong></div>
-            <div className="metric"><span className="muted">Cost</span><strong>${routed.dashboard.costUsd.toFixed(3)}</strong></div>
+            <div className="metric"><span className="muted">Provider <InfoTip label="Provider">A model service option the gateway can choose.</InfoTip></span><strong>{routed.provider.label}</strong></div>
+            <div className="metric"><span className="muted">Readiness <InfoTip label="Readiness">Whether the route meets the current cost and speed settings.</InfoTip></span><strong>{routed.readiness.status}</strong></div>
+            <div className="metric"><span className="muted">Latency <InfoTip label="Latency">How long the request is expected to take, measured in milliseconds.</InfoTip></span><strong>{routed.dashboard.latencyMs}ms</strong></div>
+            <div className="metric"><span className="muted">Cost <InfoTip label="Cost">The estimated model cost for this simulated request.</InfoTip></span><strong>${routed.dashboard.costUsd.toFixed(3)}</strong></div>
           </div>
           <p className="muted" style={{ marginTop: 14 }}>{scenarioNotes[scenario ?? "normal"]}</p>
         </div>
@@ -61,14 +79,14 @@ export function GatewayPlaygroundApp() {
 
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Routing Controls</h2>
-          <label>Scenario<select className="field" value={scenario} onChange={(event) => setScenario(event.target.value as ChatRequest["scenario"])}><option value="normal">normal</option><option value="primary_outage">primary_outage</option><option value="rate_limited">rate_limited</option><option value="cost_guardrail">cost_guardrail</option></select></label>
-          <label>Policy<select className="field" value={policy} onChange={(event) => setPolicy(event.target.value as ChatRequest["policy"])}><option value="balanced">balanced</option><option value="lowest_latency">lowest_latency</option><option value="lowest_cost">lowest_cost</option><option value="highest_reliability">highest_reliability</option></select></label>
+          <h2>Routing Controls <InfoTip label="Routing controls">Levers that change how the simulated gateway chooses a provider.</InfoTip></h2>
+          <label>Scenario <InfoTip label="Scenario">The pretend condition being tested, like an outage or rate limit.</InfoTip><select className="field" value={scenario} onChange={(event) => setScenario(event.target.value as ChatRequest["scenario"])}><option value="normal">normal</option><option value="primary_outage">primary_outage</option><option value="rate_limited">rate_limited</option><option value="cost_guardrail">cost_guardrail</option></select></label>
+          <label>Policy <InfoTip label="Policy">The rule the gateway follows, such as cheapest, fastest, or most reliable.</InfoTip><select className="field" value={policy} onChange={(event) => setPolicy(event.target.value as ChatRequest["policy"])}><option value="balanced">balanced</option><option value="lowest_latency">lowest_latency</option><option value="lowest_cost">lowest_cost</option><option value="highest_reliability">highest_reliability</option></select></label>
           <label>Max latency ms<input className="field" type="number" value={maxLatencyMs} onChange={(event) => setMaxLatencyMs(Number(event.target.value))} /></label>
           <label>Max cost USD<input className="field" type="number" step="0.001" value={maxCostUsd} onChange={(event) => setMaxCostUsd(Number(event.target.value))} /></label>
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Provider Pool</h2>
+          <h2>Provider Pool <InfoTip label="Provider pool">The available model provider options the gateway can choose from.</InfoTip></h2>
           {providers.map((provider) => (
             <div key={provider.id} className="metric" style={{ marginBottom: 10, borderColor: provider.id === routed.provider.id ? "#6dd8ff" : "#31445b" }}>
               <strong style={{ fontSize: 18 }}>{provider.label}</strong>
@@ -80,7 +98,7 @@ export function GatewayPlaygroundApp() {
 
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
-          <h2><RadioTower size={20} /> Circuit Breakers</h2>
+          <h2><RadioTower size={20} /> Circuit Breakers <InfoTip label="Circuit breaker">A safety switch that temporarily avoids a provider when it is down or rate-limited.</InfoTip></h2>
           {circuitBreakers.map((breaker) => (
             <div key={breaker.id} className="metric" style={{ marginBottom: 10, borderStyle: "dashed" }}>
               <p className="chip review"><ShieldAlert size={13} />{breaker.providerId}: {breaker.state}</p>
@@ -89,7 +107,7 @@ export function GatewayPlaygroundApp() {
           ))}
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2><Gauge size={20} /> Budget Status</h2>
+          <h2><Gauge size={20} /> Budget Status <InfoTip label="Budget status">Shows whether the selected route stays inside the speed and cost limits.</InfoTip></h2>
           <p className={routed.dashboard.latencyStatus === "PASS" ? "chip pass" : "chip review"}>Latency {routed.dashboard.latencyStatus}</p>
           <p className={routed.dashboard.budgetStatus === "PASS" ? "chip pass" : "chip review"} style={{ marginLeft: 8 }}>Cost {routed.dashboard.budgetStatus}</p>
           {routed.readiness.reasons.map((reason) => <p key={reason} className="muted">{reason}</p>)}
@@ -98,7 +116,7 @@ export function GatewayPlaygroundApp() {
       </section>
 
       <section className="panel" style={{ padding: 24, marginTop: 16 }}>
-        <h2>Request Trace Viewer</h2>
+        <h2>Request Trace Viewer <InfoTip label="Trace">A step-by-step receipt explaining why the gateway chose this route.</InfoTip></h2>
         {routed.trace.map((event, index) => (
           <div key={event.step} className="metric" style={{ marginBottom: 10 }}>
             <p className={event.status === "PASS" ? "chip pass" : "chip review"}>{index + 1}. {event.step}: {event.status}</p>

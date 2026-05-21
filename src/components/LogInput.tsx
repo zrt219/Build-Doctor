@@ -1,6 +1,7 @@
 "use client";
 
 import { Play, ClipboardPaste } from "lucide-react";
+import { InfoTip } from "./InfoTip";
 
 export function LogInput({
   value,
@@ -18,7 +19,10 @@ export function LogInput({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Build Log Intake</p>
-          <h2 className="text-xl font-semibold text-white">Paste a failed Vercel or Next.js build log</h2>
+          <h2 className="text-xl font-semibold text-white">
+            Paste a failed Vercel or Next.js build log{" "}
+            <InfoTip label="Build log">The text output from a failed deploy. It usually contains the first clue about what broke.</InfoTip>
+          </h2>
         </div>
         <span className="inline-flex items-center gap-2 rounded-md border border-dashed border-gold/70 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold">
           <ClipboardPaste className="h-4 w-4" aria-hidden="true" />

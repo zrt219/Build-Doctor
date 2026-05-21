@@ -1,10 +1,24 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, ExternalLink, FileSearch, ShieldAlert } from "lucide-react";
+import { CheckCircle2, ExternalLink, FileSearch, Info, ShieldAlert } from "lucide-react";
 import { auditRequestSchema, auditResumeClaims, evidenceCorpus } from "@/lib/rag-auditor";
 import { socialLinks } from "@/lib/social";
 import { suiteLinks, suiteProof } from "@/lib/suite";
+
+function InfoTip({ label, children }: { label: string; children: string }) {
+  return (
+    <span className="help-tip">
+      <span className="help-icon" tabIndex={0} role="note" aria-label={`${label}: ${children}`}>
+        <Info size={13} aria-hidden="true" />
+      </span>
+      <span className="help-bubble">
+        <span className="help-title">{label}</span>
+        {children}
+      </span>
+    </span>
+  );
+}
 
 export function ResumeAuditorApp() {
   const defaults = auditRequestSchema.parse({});
@@ -36,15 +50,19 @@ export function ResumeAuditorApp() {
           <span className="chip review">DEMO JSON RETRIEVAL</span>
           <h1 style={{ fontSize: 48, lineHeight: 1, margin: "24px 0 16px" }}>Audit resume claims against project evidence before tailoring bullets.</h1>
           <p className="muted" style={{ fontSize: 18, lineHeight: 1.65 }}>Editable job description, local retrieval corpus, claim verification states, unverified-claim flags, evidence gaps, and grounded bullet export.</p>
+          <div className="plain-panel">
+            <div className="muted mono" style={{ fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase" }}>Plain English</div>
+            <p className="muted" style={{ marginBottom: 0 }}>This tool checks whether resume claims are backed by real project evidence, then helps rewrite only the claims that can be supported.</p>
+          </div>
           <div className="nav" style={{ marginTop: 18 }}>{suiteProof.map((item) => <span key={item} className="chip pass">{item}</span>)}</div>
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Readiness Console</h2>
+          <h2>Readiness Console <InfoTip label="Readiness">A quick view of how many claims are supported and whether the resume needs review.</InfoTip></h2>
           <div className="grid two">
-            <div className="metric"><span className="muted">Readiness</span><strong>{audit.readiness.status}</strong></div>
-            <div className="metric"><span className="muted">Verified score</span><strong>{audit.summary.score}%</strong></div>
-            <div className="metric"><span className="muted">Verified</span><strong>{audit.summary.verified}/{audit.summary.total}</strong></div>
-            <div className="metric"><span className="muted">Evidence records</span><strong>{evidenceCorpus.length}</strong></div>
+            <div className="metric"><span className="muted">Readiness <InfoTip label="Readiness">READY means all entered claims have evidence. REVIEW means some claims need proof or rewriting.</InfoTip></span><strong>{audit.readiness.status}</strong></div>
+            <div className="metric"><span className="muted">Verified score <InfoTip label="Verified score">The percent of claims that matched project evidence.</InfoTip></span><strong>{audit.summary.score}%</strong></div>
+            <div className="metric"><span className="muted">Verified <InfoTip label="Verified claims">Claims that found a matching project evidence record.</InfoTip></span><strong>{audit.summary.verified}/{audit.summary.total}</strong></div>
+            <div className="metric"><span className="muted">Evidence records <InfoTip label="Evidence records">The local proof documents the demo searches through.</InfoTip></span><strong>{evidenceCorpus.length}</strong></div>
           </div>
           <p className="muted" style={{ marginTop: 14 }}>Matched job terms: {matchTerms.join(", ") || "none yet"}</p>
         </div>
@@ -52,14 +70,14 @@ export function ResumeAuditorApp() {
 
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Inputs</h2>
+          <h2>Inputs <InfoTip label="Inputs">Paste the job description and the resume claims you want checked.</InfoTip></h2>
           <label className="muted" htmlFor="jd">Job description</label>
           <textarea id="jd" className="field" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} style={{ minHeight: 130 }} />
           <label className="muted" htmlFor="claims" style={{ display: "block", marginTop: 12 }}>Claims, one per line</label>
           <textarea id="claims" className="field" value={claimsText} onChange={(event) => setClaimsText(event.target.value)} style={{ minHeight: 160 }} />
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2><FileSearch size={20} /> Evidence Corpus</h2>
+          <h2><FileSearch size={20} /> Evidence Corpus <InfoTip label="Evidence corpus">The small library of project proof this demo searches. In a larger system, this could be a database or document store.</InfoTip></h2>
           {evidenceCorpus.map((item) => (
             <div key={item.id} className="metric" style={{ marginBottom: 10 }}>
               <strong style={{ fontSize: 18 }}>{item.title}</strong>
@@ -71,7 +89,7 @@ export function ResumeAuditorApp() {
       </section>
 
       <section className="panel" style={{ padding: 24, marginTop: 16 }}>
-        <h2>Claim Review</h2>
+        <h2>Claim Review <InfoTip label="Claim review">Each claim is marked VERIFIED when evidence supports it, or UNVERIFIED when it needs proof.</InfoTip></h2>
         <div className="grid">
           {audit.auditedClaims.map((claim) => (
             <div key={claim.claim} className="metric" style={{ borderStyle: claim.status === "VERIFIED" ? "solid" : "dashed" }}>
@@ -87,7 +105,7 @@ export function ResumeAuditorApp() {
 
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Evidence Gaps + Checklist</h2>
+          <h2>Evidence Gaps + Checklist <InfoTip label="Evidence gap">A missing proof point. The safest action is to remove the claim, rewrite it, or attach evidence.</InfoTip></h2>
           {audit.evidenceGaps.length ? audit.evidenceGaps.map((gap) => (
             <div key={gap.claim} className="metric" style={{ marginBottom: 10, borderStyle: "dashed" }}>
               <p className="chip review">Evidence gap</p>
@@ -98,7 +116,7 @@ export function ResumeAuditorApp() {
           {audit.readiness.checklist.map((item) => <p key={item} className="chip" style={{ marginRight: 8 }}>{item}</p>)}
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Grounded Bullet Export</h2>
+          <h2>Grounded Bullet Export <InfoTip label="Grounded bullet">A resume bullet generated only from supported claims, not inflated claims.</InfoTip></h2>
           <pre className="mono" style={{ whiteSpace: "pre-wrap", color: "#dceaff", maxHeight: 340, overflow: "auto" }}>{audit.tailoredBullets.map((bullet) => `- ${bullet}`).join("\n")}</pre>
         </div>
       </section>

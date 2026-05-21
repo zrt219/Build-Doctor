@@ -27,4 +27,10 @@ button, input, textarea, select { font: inherit; }
 .metric { border: 1px solid #31445b; border-radius: 8px; padding: 14px; background: rgba(0,0,0,.24); }
 .metric strong { display: block; margin-top: 8px; font-size: 28px; color: #fff; }
 .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.plain-panel { border: 1px dashed #67cef4; background: rgba(86,185,255,.07); border-radius: 8px; padding: 14px; margin-top: 16px; }
+.help-tip { position: relative; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 6px; }
+.help-icon { display: inline-flex; width: 20px; height: 20px; align-items: center; justify-content: center; border: 1px solid #67cef4; border-radius: 999px; color: #9de8ff; background: rgba(86,185,255,.12); cursor: help; }
+.help-bubble { display: none; position: absolute; left: 50%; top: 28px; z-index: 20; width: min(290px, calc(100vw - 48px)); transform: translateX(-50%); border: 1px solid #31445b; border-radius: 8px; background: #071018; color: #dceaff; padding: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.45); font-size: 12px; line-height: 1.55; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.help-tip:hover .help-bubble, .help-tip:focus-within .help-bubble { display: block; }
+.help-title { display: block; color: #9de8ff; text-transform: uppercase; letter-spacing: .12em; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
 @media (max-width: 850px) { .two, .three { grid-template-columns: 1fr; } }

@@ -1,11 +1,15 @@
 "use client";
 
 import { sampleLogs } from "@/lib/sample-logs";
+import { InfoTip } from "./InfoTip";
 
 export function SampleLogPicker({ activeId, onPick }: { activeId: string; onPick: (id: string) => void }) {
   return (
     <section className="rounded-lg border border-line bg-black/30 p-4">
-      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Simulated fixture logs</p>
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+        Simulated fixture logs{" "}
+        <InfoTip label="Fixture log">A safe sample error log used to demonstrate the tool without exposing a real project.</InfoTip>
+      </p>
       <div className="grid gap-2">
         {sampleLogs.map((sample, index) => (
           <button

@@ -10,6 +10,7 @@ import { CaseStudySection } from "./CaseStudySection";
 import { DiagnosisPanel } from "./DiagnosisPanel";
 import { EvidenceTable } from "./EvidenceTable";
 import { FixPlan } from "./FixPlan";
+import { InfoTip } from "./InfoTip";
 import { IncidentReport } from "./IncidentReport";
 import { LogInput } from "./LogInput";
 import { SampleLogPicker } from "./SampleLogPicker";
@@ -104,6 +105,12 @@ export function BuildDoctorApp() {
           <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
             Paste a failing Vercel or Next.js build log. Build Doctor classifies the failure, extracts evidence, proposes fixes, generates a patch checklist, and exports a recruiter-ready incident report.
           </p>
+          <div className="mt-5 rounded-md border border-dashed border-cyan/40 bg-cyan/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">Plain English</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              When a website fails to deploy, the error log can look overwhelming. This tool reads the log, hides secrets, points to the likely cause, and gives the next commands to try.
+            </p>
+          </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <a href="#diagnose" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/15 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:bg-cyan/25">
               Run diagnosis <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -114,7 +121,10 @@ export function BuildDoctorApp() {
           </div>
         </div>
         <div className="rounded-lg border border-line bg-black/35 p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Diagnostic Pipeline</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">
+            Diagnostic Pipeline{" "}
+            <InfoTip label="Pipeline">The step-by-step path the tool follows, from pasted log to fix checklist.</InfoTip>
+          </p>
           {["Ingest log", "Redact secrets", "Classify failure", "Extract evidence", "Map fix recipe", "Generate report"].map((step, index) => (
             <div key={step} className="mt-4 flex items-center gap-3 rounded-md border border-line bg-panel/70 p-3">
               <span className="flex h-7 w-7 items-center justify-center rounded-sm border border-cyan/50 font-mono text-xs text-cyan">{index + 1}</span>

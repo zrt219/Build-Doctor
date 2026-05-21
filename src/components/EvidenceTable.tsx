@@ -1,9 +1,13 @@
 import type { Diagnosis } from "@/lib/schemas";
+import { InfoTip } from "./InfoTip";
 
 export function EvidenceTable({ diagnosis }: { diagnosis: Diagnosis }) {
   return (
     <section className="rounded-lg border border-line bg-panel/90 p-5">
-      <h3 className="text-lg font-semibold text-white">Extracted Evidence</h3>
+      <h3 className="text-lg font-semibold text-white">
+        Extracted Evidence{" "}
+        <InfoTip label="Evidence">The exact lines the tool used to make its decision, so the diagnosis can be checked instead of trusted blindly.</InfoTip>
+      </h3>
       <div className="mt-4 overflow-hidden rounded-md border border-line">
         <table className="w-full border-collapse text-sm">
           <thead className="bg-white/5 text-xs uppercase tracking-[0.16em] text-slate-300">

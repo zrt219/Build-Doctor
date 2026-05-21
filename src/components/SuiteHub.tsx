@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, ExternalLink, GitBranch, RadioTower, ShieldCheck } from "lucide-react";
 import { runEvalSuite } from "@/lib/build-doctor";
 import { suiteApps, suiteDemoFlow } from "@/lib/suite-metadata";
+import { InfoTip } from "./InfoTip";
 import { SocialLinks } from "./SocialLinks";
 import { StatusChip } from "./StatusChip";
 
@@ -26,7 +27,10 @@ export function SuiteHub() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.22em] text-slate-400">ZRT Vercel AI Systems Suite</p>
-              <p className="font-semibold text-white">Connected portfolio command center</p>
+              <p className="font-semibold text-white">
+                Connected portfolio command center{" "}
+                <InfoTip label="What this is">A single home base that links four working demos, their proof routes, and the reviewer flow.</InfoTip>
+              </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -45,6 +49,12 @@ export function SuiteHub() {
           <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
             Four separate Vercel apps are connected through one premium command center. Every demo is deterministic, explicitly labeled, production deployed, and built to show applied AI product engineering without fake integrations.
           </p>
+          <div className="mt-5 rounded-md border border-dashed border-cyan/40 bg-cyan/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">Plain English</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              This suite is like a showroom for AI engineering work: one app explains broken website builds, one chooses backup AI providers, one designs safe business workflows, and one checks resume claims against evidence.
+            </p>
+          </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/15 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:bg-cyan/25">
               Start guided demo <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -58,14 +68,21 @@ export function SuiteHub() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Suite Readiness</p>
           <div className="mt-4 grid gap-3">
             <div className="rounded-md border border-line bg-panel/70 p-4">
-              <p className="text-sm text-slate-400">Build Doctor local evals</p>
+              <p className="text-sm text-slate-400">
+                Build Doctor local evals{" "}
+                <InfoTip label="Eval">A repeatable test set that checks whether the app gives the right answer for known examples.</InfoTip>
+              </p>
               <p className="mt-2 text-4xl font-semibold text-white">{buildDoctorEvals.score}%</p>
               <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">{buildDoctorEvals.passed}/{buildDoctorEvals.total} fixtures passing</p>
             </div>
             {["Separate Vercel projects", "Health endpoints", "Eval endpoints", "Cross-app navigation"].map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-md border border-line bg-panel/70 p-3">
                 <CheckCircle2 className="h-4 w-4 text-cyan" aria-hidden="true" />
-                <span className="text-sm font-medium text-slate-100">{item}</span>
+                <span className="text-sm font-medium text-slate-100">
+                  {item}{" "}
+                  {item === "Health endpoints" ? <InfoTip label="Health endpoint">A simple URL that says whether the app is responding and what mode it is running in.</InfoTip> : null}
+                  {item === "Eval endpoints" ? <InfoTip label="Eval endpoint">A public URL that returns the app's test score as structured data.</InfoTip> : null}
+                </span>
               </div>
             ))}
           </div>
@@ -96,10 +113,10 @@ export function SuiteHub() {
                 Health <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
               <a href={app.evalEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
-                Eval <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                Eval <InfoTip label="Eval">Shows the demo's self-check score, like a small report card for its main behavior.</InfoTip> <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
               <a href={app.integrationEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
-                Integration <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                Integration <InfoTip label="Integration">Shows whether outside services such as Supabase or OpenRouter are live, or if the app is safely using demo fallback mode.</InfoTip> <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
             </div>
           </article>
@@ -107,7 +124,10 @@ export function SuiteHub() {
       </section>
 
       <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
-        <h2 className="text-2xl font-semibold text-white">Live Proof Checklist</h2>
+        <h2 className="text-2xl font-semibold text-white">
+          Live Proof Checklist{" "}
+          <InfoTip label="Live proof">Public links reviewers can click to confirm the apps load and return safe structured status data.</InfoTip>
+        </h2>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
           These links are intentionally public and secret-safe. They show route health, deterministic eval status, and whether Supabase/OpenRouter integrations are live or running in fallback mode.
         </p>
