@@ -100,6 +100,17 @@ Verified Supabase write evidence:
 | Enterprise Studio | 4 approval-policy fixtures |
 | Resume Auditor | 4 grounding and safety fixtures |
 
+## Premium Audit Handoff
+
+| Artifact | Purpose |
+|---|---|
+| `SECURITY_AUDIT_HANDOFF.md` | Reviewer-facing security and release-candidate handoff summary. |
+| `audit-results/summary.json` | Machine-readable 45,000-check audit total, pass/fail counts, and verdict. |
+| `audit-results/failures.json` | Failure list; expected to be empty when the audit passes. |
+| `audit-results/coverage-by-app.json` | Per-app and per-category coverage counts. |
+
+Latest local deterministic audit target: 45,000 checks, positioned as engineering-review evidence rather than production security certification.
+
 ## OpenAI-Focused Pitch
 
 This suite demonstrates coding-agent-adjacent product engineering: failure analysis, structured outputs, tool-use planning, deterministic fallback, eval loops, and evidence-based reporting. Build Doctor is the strongest OpenAI Codex signal because it converts raw failure logs into a structured diagnosis, patch checklist, verification commands, and incident report.
@@ -113,6 +124,7 @@ This suite demonstrates customer-facing applied AI workflow design: safety label
 - This is not a full SaaS platform: no user accounts, billing, or production observability stack.
 - Supabase runtime mode requires Vercel env vars before the deployed apps can write demo events.
 - OpenRouter live mode requires `OPENROUTER_API_KEY`; otherwise AI Gateway returns deterministic fallback output.
+- Any OpenRouter key exposed outside Vercel environment settings should be rotated before live use.
 - A public exact GitHub repo URL is still pending because this local environment has no `gh` CLI and the available GitHub connector exposes file operations for existing repos, not repository creation.
 
 ## Resume Bullets
@@ -120,6 +132,7 @@ This suite demonstrates customer-facing applied AI workflow design: safety label
 - Built a connected Vercel AI Systems Suite across four deployed Next.js apps, unifying build diagnosis, AI gateway failover, enterprise agent workflow design, and resume evidence auditing into a reviewer-ready demo with health/eval proof links.
 - Added integration-health surfaces and Supabase-ready evidence persistence contracts with deterministic fallback behavior, giving reviewers a secret-safe view into deployment and integration readiness.
 - Implemented an OpenRouter-backed AI Gateway route with mock fallback, request tracing, cost/latency policy simulation, and deterministic eval coverage for provider-routing behavior.
+- Built a deterministic 45,000-check audit harness for the four-app Vercel AI suite, covering log diagnosis, provider failover, enterprise workflow safety, resume-evidence grounding, API contracts, and secret-redaction controls with generated handoff artifacts.
 
 ## Final Reviewer Checklist
 
@@ -128,4 +141,5 @@ This suite demonstrates customer-facing applied AI workflow design: safety label
 - Open each app’s health, eval, and integration-health route.
 - In AI Gateway, run `/api/chat` with and without OpenRouter configured.
 - Confirm no response exposes raw secrets.
+- Review `SECURITY_AUDIT_HANDOFF.md` and `audit-results/summary.json`.
 - Review `supabase/schema.sql`, tests, and deployment smoke evidence in `ai-engineering/daily-engineering-log.md`.

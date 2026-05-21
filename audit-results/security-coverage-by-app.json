@@ -1,0 +1,16 @@
+{
+  "Security Payloads": {
+    "total": 4000,
+    "passed": 4000,
+    "failed": 0,
+    "skipped": 0,
+    "categories": {
+      "secret-redaction-corpus": 667,
+      "report-redaction-safety": 667,
+      "bad-payload-rejection": 667,
+      "oversized-input-rejection": 667,
+      "prompt-injection-containment": 666,
+      "integration-health-secret-safety": 666
+    }
+  }
+}

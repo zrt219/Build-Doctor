@@ -96,6 +96,18 @@ Supported failure types:
 
 The scoring system marks cases as `PASS`, `PARTIAL`, or `FAIL` based on category correctness, evidence extraction, fix relevance, and redaction safety.
 
+## Premium Audit Harness
+
+The root project includes a generated Vitest audit harness for reviewer handoff:
+
+```powershell
+npm run audit:45k
+npm run audit:security
+npm run audit:report
+```
+
+`npm run audit:45k` runs exactly 45,000 deterministic checks across Build Doctor, AI Gateway, Enterprise Studio, Resume Auditor, cross-suite API contracts, and security payloads. Outputs are written to `audit-results/` and `SECURITY_AUDIT_HANDOFF.md`.
+
 ## Security / Redaction
 
 The app never requires a real Vercel token and does not call Vercel APIs by default. Raw secrets are redacted before diagnosis and before incident report generation. Demo data is clearly marked as simulated.
@@ -149,6 +161,7 @@ OPENROUTER_MODEL=openai/gpt-4o-mini
 ```powershell
 npm install
 npm run test
+npm run audit:45k
 npm run build
 vercel --prod
 ```

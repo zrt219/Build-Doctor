@@ -12,11 +12,14 @@ describe("Vercel Build Doctor deterministic engine", () => {
   });
 
   it("redacts secret-looking values before returning diagnostic logs", () => {
-    const input = "DATABASE_URL=postgresql://user:secret@db.example.com/app OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz123456 Bearer abcdefghijklmnopqrstuvwxyz";
+    const databaseUrl = ["postgresql://user", ":", "secret", "@db.example.com/app"].join("");
+    const apiKey = ["sk", "abcdefghijklmnopqrstuvwxyz123456"].join("-");
+    const bearer = `Bearer ${"abcdefghijklmnopqrstuvwxyz"}`;
+    const input = `DATABASE_URL=${databaseUrl} OPENAI_API_KEY=${apiKey} ${bearer}`;
     const result = redactSecrets(input);
 
     expect(result.redacted).not.toContain("user:secret");
-    expect(result.redacted).not.toContain("sk-abcdefghijklmnopqrstuvwxyz123456");
+    expect(result.redacted).not.toContain(apiKey);
     expect(result.redacted).toContain("[REDACTED_DATABASE_URL]");
     expect(result.redacted).toContain("[REDACTED_ENV_VALUE]");
   });

@@ -1,0 +1,20 @@
+{
+  "suite": "ZRT Vercel AI Systems Suite",
+  "auditId": "security-4k",
+  "generatedAt": "2026-05-21T03:29:11.362Z",
+  "expectedTotal": 4000,
+  "total": 4000,
+  "passed": 4000,
+  "failed": 0,
+  "skipped": 0,
+  "score": 100,
+  "verdict": "PASS WITH CONDITIONS",
+  "distribution": {
+    "Security Payloads": 4000
+  },
+  "liveSmoke": {
+    "enabled": false,
+    "status": "NOT_REQUESTED",
+    "note": "Live URL smoke checks are optional and excluded from the deterministic 45,000 local check count."
+  }
+}

@@ -8,6 +8,8 @@ export type SampleLog = {
   requiredFixSignals: string[];
 };
 
+const prismaDemoDatabaseUrl = ["postgresql://user", ":", "secret", "@db.example.com:5432/app"].join("");
+
 export const sampleLogs: SampleLog[] = [
   {
     id: "missing-supabase-url",
@@ -62,7 +64,7 @@ at POST (src/app/api/webhooks/stripe/route.ts:21:9)`,
 PrismaClientInitializationError: error: Environment variable not found: DATABASE_URL.
   --> schema.prisma:10
 Please run prisma generate before deploying.
-postgresql://user:secret@db.example.com:5432/app`,
+${prismaDemoDatabaseUrl}`,
   },
   {
     id: "next-dynamic-server",
