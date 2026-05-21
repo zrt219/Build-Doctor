@@ -5,11 +5,10 @@ import { StatusChip } from "./StatusChip";
 export function CaseStudySection() {
   const evals = runEvalSuite();
   const items = [
-    ["OpenAI Codex Core Agent", "long-horizon coding workflow, failure analysis, tool-use strategy"],
-    ["Vercel Agent", "build/deploy debugging, production context, Vercel-first readiness"],
-    ["Grafana AI/Ops", "incident analysis, noisy signal reduction, root-cause reporting"],
-    ["Anthropic Applied AI", "customer-facing workflow, structured outputs, eval discipline"],
-    ["Cohere Agentic Workflows", "safety, auditability, deterministic enterprise workflow"],
+    ["Developer tooling", "failed build diagnosis, evidence extraction, report export"],
+    ["AI product engineering", "deterministic source of truth with optional model review"],
+    ["Reliability", "provider failure handling, redaction tests, browser workflow coverage"],
+    ["Safety", "sanitized inputs, paid-model blocking, no automatic patch application"],
   ];
 
   return (
@@ -17,16 +16,16 @@ export function CaseStudySection() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Case Study Signal</p>
-          <h2 className="text-2xl font-semibold text-white">Agentic build diagnosis with eval evidence</h2>
+          <h2 className="text-2xl font-semibold text-white">Deterministic build diagnosis with optional DeepSeek review</h2>
         </div>
         <StatusChip kind={evals.failed === 0 ? "pass" : "review"} label={`Eval score ${evals.score}%`} />
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-4">
         {[
-          [BrainCircuit, "Structured outputs", "Zod contracts drive diagnosis, reports, and eval results."],
-          [Radar, "Evidence workflow", "Parser extracts fatal lines, files, warnings, and root-cause signals."],
-          [ShieldCheck, "Secret safety", "Logs are redacted before diagnosis, display, reports, and optional AI calls."],
-          [Boxes, "Deployment surface", "Routes mirror Vercel build, env, runtime, and package failure modes."],
+          [BrainCircuit, "Deterministic-first", "Local rules own the root-cause diagnosis, evidence, trace, patch draft, and report."],
+          [Radar, "Evidence trail", "Parser extracts fatal lines, files, warnings, and root-cause signals."],
+          [ShieldCheck, "Secret safety", "Logs are redacted before diagnosis, display, reports, and optional DeepSeek review."],
+          [Boxes, "Developer workflow", "The app turns pasted logs into a safe patch draft and markdown incident report."],
         ].map(([Icon, title, body]) => (
           <div key={String(title)} className="rounded-md border border-line bg-black/35 p-4">
             <Icon className="h-5 w-5 text-gold" aria-hidden="true" />

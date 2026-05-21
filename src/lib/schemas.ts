@@ -5,7 +5,16 @@ export const failureTypeSchema = z.enum([
   "TYPESCRIPT_ERROR",
   "MODULE_NOT_FOUND",
   "NEXT_BUILD_ERROR",
+  "NEXT_STATIC_GENERATION_ERROR",
   "PACKAGE_INSTALL_ERROR",
+  "PNPM_LOCKFILE_MISMATCH",
+  "PACKAGE_JSON_PARSE",
+  "SPAWN_PERMISSION",
+  "VERCEL_ENV_VAR_MISSING",
+  "SERVERLESS_FUNCTION_LIMIT",
+  "ESLINT_BUILD_ERROR",
+  "VITE_BUILD_ERROR",
+  "APP_ROUTER_ROUTE_HANDLER_ERROR",
   "PRISMA_DATABASE_ERROR",
   "SUPABASE_CONFIG_ERROR",
   "STRIPE_WEBHOOK_ERROR",
@@ -33,6 +42,110 @@ export const evidenceLineSchema = z.object({
   content: z.string(),
 });
 
+export const traceStepSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  status: z.enum(["complete", "warning", "skipped"]),
+  inputSummary: z.string(),
+  outputSummary: z.string(),
+  evidenceRefs: z.array(z.string()),
+  summary: z.string().optional(),
+  detail: z.string().optional(),
+});
+
+export const graphRunSchema = z.object({
+  id: z.string(),
+  mode: z.literal("local-deterministic"),
+  nodeSequence: z.array(z.string()),
+  checkpointSafe: z.boolean(),
+  approvalState: z.enum(["not_required", "pending", "approved", "rejected"]),
+  providerStatus: z.enum(["disabled", "skipped", "mocked", "blocked", "unavailable", "complete"]),
+});
+
+export const patchDraftSchema = z.object({
+  title: z.string(),
+  failureType: failureTypeSchema,
+  likelyAffectedFiles: z.array(z.string()),
+  rationale: z.string(),
+  snippet: z.string(),
+  verificationCommands: z.array(z.string()),
+  risks: z.array(z.string()),
+  confidence: z.enum(["high", "medium", "low"]),
+  affectedFiles: z.array(z.string()).optional(),
+  snippetLanguage: z.enum(["bash", "ts", "tsx", "js", "json", "env", "text"]).optional(),
+  verificationNote: z.string().optional(),
+});
+
+export const solutionSuggestionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  whenToUse: z.string(),
+  failureType: failureTypeSchema,
+  confidence: z.enum(["high", "medium", "low"]),
+  likelyAffectedFiles: z.array(z.string()),
+  envVars: z
+    .array(
+      z.object({
+        name: z.string(),
+        visibility: z.enum(["public_client", "server_only", "unknown"]),
+        required: z.boolean(),
+        placeholder: z.string(),
+        warning: z.string().optional(),
+      }),
+    )
+    .optional(),
+  steps: z.array(z.string()),
+  snippet: z
+    .object({
+      label: z.string(),
+      language: z.enum(["bash", "ts", "json", "env", "txt"]),
+      value: z.string(),
+    })
+    .optional(),
+  verificationCommands: z.array(z.string()),
+  risks: z.array(z.string()),
+  reportInsert: z.string(),
+});
+
+export const autofillFixPlanSchema = z.object({
+  title: z.string(),
+  selectedSuggestionIds: z.array(z.string()),
+  editablePlan: z.string(),
+  commands: z.array(z.string()),
+  snippets: z.array(
+    z.object({
+      label: z.string(),
+      language: z.string(),
+      value: z.string(),
+    }),
+  ),
+});
+
+export const aiPatchReviewSchema = z.object({
+  enabled: z.boolean(),
+  provider: z.literal("openrouter"),
+  model: z.string(),
+  summary: z.string(),
+  improvedExplanation: z.string(),
+  patchReview: z.string(),
+  cautions: z.array(z.string()),
+  suggestedVerification: z.array(z.string()),
+  confidence: z.enum(["high", "medium", "low"]),
+  usedSanitizedInputOnly: z.boolean(),
+});
+
+export const cachedProviderReviewSchema = z.object({
+  label: z.literal("Cached DeepSeek demo review"),
+  cached: z.literal(true),
+  summary: z.string(),
+  improvedExplanation: z.string(),
+  patchReview: z.string(),
+  cautions: z.array(z.string()),
+  suggestedVerification: z.array(z.string()),
+  confidence: z.enum(["high", "medium", "low"]),
+});
+
 export const diagnosisSchema = z.object({
   failureType: failureTypeSchema,
   label: z.string(),
@@ -44,6 +157,12 @@ export const diagnosisSchema = z.object({
   warnings: z.array(z.string()),
   fixPlan: z.array(z.string()),
   patchChecklist: z.array(z.string()),
+  traceSteps: z.array(traceStepSchema),
+  graphRun: graphRunSchema,
+  patchDraft: patchDraftSchema,
+  solutionSuggestions: z.array(solutionSuggestionSchema),
+  autofillFixPlan: autofillFixPlanSchema,
+  aiPatchReview: aiPatchReviewSchema.optional(),
   verificationCommands: z.array(z.string()),
   preventionChecklist: z.array(z.string()),
   readinessReport: z.object({
@@ -58,6 +177,13 @@ export const diagnosisSchema = z.object({
 
 export type Diagnosis = z.infer<typeof diagnosisSchema>;
 export type EvidenceLine = z.infer<typeof evidenceLineSchema>;
+export type TraceStep = z.infer<typeof traceStepSchema>;
+export type GraphRun = z.infer<typeof graphRunSchema>;
+export type PatchDraft = z.infer<typeof patchDraftSchema>;
+export type SolutionSuggestion = z.infer<typeof solutionSuggestionSchema>;
+export type AutofillFixPlan = z.infer<typeof autofillFixPlanSchema>;
+export type AiPatchReview = z.infer<typeof aiPatchReviewSchema>;
+export type CachedProviderReview = z.infer<typeof cachedProviderReviewSchema>;
 
 export const diagnoseRequestSchema = z.object({
   log: z.string().min(1),
@@ -65,6 +191,14 @@ export const diagnoseRequestSchema = z.object({
 });
 
 export const reportRequestSchema = z.object({
+  diagnosis: diagnosisSchema,
+  providerStatus: z.string().optional(),
+  cachedProviderReview: cachedProviderReviewSchema.optional(),
+  selectedSolutionSuggestions: z.array(solutionSuggestionSchema).optional(),
+  autofillFixPlan: autofillFixPlanSchema.optional(),
+});
+
+export const enrichRequestSchema = z.object({
   diagnosis: diagnosisSchema,
 });
 

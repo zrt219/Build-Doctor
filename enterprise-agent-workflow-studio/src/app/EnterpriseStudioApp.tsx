@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ArrowRight, CheckCircle2, ExternalLink, GitBranch, Info, ShieldAlert } from "lucide-react";
 import { generateAuditReport, generateWorkflow, toolRegistry, type WorkflowRequest } from "@/lib/workflow-studio";
 import { socialLinks } from "@/lib/social";
-import { suiteLinks, suiteProof } from "@/lib/suite";
+import { activeWorkflowStepId, suiteLinks, suiteProof, suiteWorkflowSteps } from "@/lib/suite";
 
 const scenarios = [
   {
@@ -82,7 +82,7 @@ export function EnterpriseStudioApp() {
             <strong>Enterprise Agent Workflow Studio</strong>
           </div>
           <nav className="nav" aria-label="Suite navigation">
-            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href}>{link.label}</a>)}
+            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href} aria-current={link.label === "Enterprise Studio" ? "page" : undefined}>{link.label}</a>)}
           </nav>
         </div>
         <nav className="nav" aria-label="ZRT social links" style={{ marginTop: 14 }}>
@@ -147,6 +147,23 @@ export function EnterpriseStudioApp() {
               <p className={node.status === "APPROVAL REQUIRED" ? "chip review" : "chip pass"}>{node.status === "APPROVAL REQUIRED" ? <ShieldAlert size={13} /> : <CheckCircle2 size={13} />}{node.status}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="panel" style={{ padding: 24, marginTop: 16 }}>
+        <h2>Cross-App Build Repair Workflow <InfoTip label="Patch suggestion">This step turns the Build Doctor diagnosis and Gateway trace into a guarded patch plan.</InfoTip></h2>
+        <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+          {suiteWorkflowSteps.map((step, index) => (
+            <a key={step.id} className={step.id === activeWorkflowStepId ? "metric workflow-active" : "metric"} href={step.href} style={{ textDecoration: "none" }}>
+              <div className="mono muted">STEP {index + 1} | {step.appName}</div>
+              <strong style={{ fontSize: 17 }}>{step.label}</strong>
+              <p className={step.id === activeWorkflowStepId ? "chip pass" : "chip"}>{step.output}</p>
+            </a>
+          ))}
+        </div>
+        <div className="plain-panel">
+          <div className="muted mono" style={{ fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase" }}>Suggested patch handoff</div>
+          <p className="muted">Use the smallest code or configuration change that closes the diagnosed failure, keep write-capable actions behind approval, then rerun the verification commands before exporting the audit report.</p>
         </div>
       </section>
 

@@ -39,6 +39,13 @@ const rules: PatternRule[] = [
     patterns: [/Missing required environment variable/i, /process\.env\.[A-Z0-9_]+/i, /env validation/i],
   },
   {
+    type: "VERCEL_ENV_VAR_MISSING",
+    subsystem: "Vercel Environment",
+    rootCause: "A required environment variable is missing from the active Vercel deployment scope.",
+    confidence: 0.9,
+    patterns: [/Environment Variable .* is not set/i, /vercel env/i, /No Environment Variable found/i],
+  },
+  {
     type: "TYPESCRIPT_ERROR",
     subsystem: "TypeScript",
     rootCause: "The production build failed on a static type contract mismatch.",
@@ -53,6 +60,13 @@ const rules: PatternRule[] = [
     patterns: [/Module not found/i, /Can't resolve/i, /Cannot find module/i],
   },
   {
+    type: "PACKAGE_JSON_PARSE",
+    subsystem: "Package Manifest",
+    rootCause: "The package manifest cannot be parsed as valid JSON, so dependency installation or build startup cannot continue.",
+    confidence: 0.9,
+    patterns: [/EJSONPARSE/i, /Failed to parse package\.json/i, /Unexpected token .*package\.json/i, /JSON\.parse/i],
+  },
+  {
     type: "PACKAGE_INSTALL_ERROR",
     subsystem: "Package Installation",
     rootCause: "The package manager failed before the app build could start, usually from dependency conflicts or lockfile drift.",
@@ -60,11 +74,46 @@ const rules: PatternRule[] = [
     patterns: [/ERESOLVE/i, /npm ERR!/i, /peer dependency/i, /package-lock/i],
   },
   {
+    type: "PNPM_LOCKFILE_MISMATCH",
+    subsystem: "Package Installation",
+    rootCause: "pnpm refused to install because the lockfile does not match package.json.",
+    confidence: 0.9,
+    patterns: [/ERR_PNPM_OUTDATED_LOCKFILE/i, /frozen-lockfile/i, /pnpm-lock\.yaml/i],
+  },
+  {
+    type: "SPAWN_PERMISSION",
+    subsystem: "Build Scripts / Permissions",
+    rootCause: "The build cannot spawn a required process or execute a script because of permissions or missing executable access.",
+    confidence: 0.86,
+    patterns: [/\bEACCES\b/i, /\bEPERM\b/i, /spawn .* (EACCES|EPERM|ENOENT)/i, /permission denied/i, /not executable/i],
+  },
+  {
     type: "VERCEL_RUNTIME_ERROR",
     subsystem: "Vercel Runtime",
     rootCause: "A function or route is configured for a runtime that does not support the APIs it imports.",
     confidence: 0.86,
     patterns: [/Edge Runtime/i, /Node\.js APIs are not available/i, /Function Runtimes/i],
+  },
+  {
+    type: "SERVERLESS_FUNCTION_LIMIT",
+    subsystem: "Vercel Functions",
+    rootCause: "The serverless function exceeded a Vercel size, duration, memory, or invocation limit.",
+    confidence: 0.88,
+    patterns: [/Serverless Function .* exceeded/i, /FUNCTION_INVOCATION_TIMEOUT/i, /function size limit/i, /maximum execution duration/i],
+  },
+  {
+    type: "ESLINT_BUILD_ERROR",
+    subsystem: "Lint / Build Gate",
+    rootCause: "The production build is blocked by an ESLint error.",
+    confidence: 0.87,
+    patterns: [/ESLint/i, /Failed to compile.*eslint/i, /Linting and checking validity of types/i],
+  },
+  {
+    type: "VITE_BUILD_ERROR",
+    subsystem: "Vite Build",
+    rootCause: "The Vite/Rollup production build failed on import resolution or transform errors.",
+    confidence: 0.86,
+    patterns: [/vite build/i, /Rollup failed to resolve import/i, /Transform failed/i],
   },
   {
     type: "OUT_OF_MEMORY",
@@ -78,7 +127,21 @@ const rules: PatternRule[] = [
     subsystem: "Next.js Build",
     rootCause: "Next.js failed while compiling, prerendering, or validating route behavior.",
     confidence: 0.78,
-    patterns: [/Dynamic server usage/i, /Failed to collect page data/i, /Error occurred prerendering page/i, /next build/i],
+    patterns: [/Dynamic server usage/i, /Failed to collect page data for \/(?!api)/i, /next build/i],
+  },
+  {
+    type: "NEXT_STATIC_GENERATION_ERROR",
+    subsystem: "Next.js Static Generation",
+    rootCause: "Next.js failed while prerendering a page during static generation.",
+    confidence: 0.86,
+    patterns: [/Error occurred prerendering page/i, /Export encountered errors/i, /Generating static pages .* failed/i],
+  },
+  {
+    type: "APP_ROUTER_ROUTE_HANDLER_ERROR",
+    subsystem: "Next.js App Router",
+    rootCause: "An App Router route handler failed because of request handling, runtime, or response-shape issues.",
+    confidence: 0.84,
+    patterns: [/Route handler .* failed/i, /app\/api\/.+route\.(ts|js)/i, /Failed to collect page data for \/api/i],
   },
 ];
 
@@ -94,7 +157,7 @@ function extractEvidence(log: string): EvidenceLine[] {
     { kind: "error", pattern: /\b(error|failed|fatal|exception)\b/i },
     { kind: "warning", pattern: /\b(warn|warning)\b/i },
     { kind: "stack", pattern: /^\s*at\s+.+\(.+\)/i },
-    { kind: "file", pattern: /(?:\.\/)?(?:src|app|pages|components|lib|prisma)\/[^\s:)]+/i },
+    { kind: "file", pattern: /(?:\.\/)?(?:(?:src|app|pages|components|lib|prisma)\/[^\s:)]+|package\.json|next\.config\.[cm]?[jt]s|tsconfig\.json|\.env\.example|vercel\.json)/i },
   ];
 
   lines.forEach((content, index) => {
@@ -112,7 +175,7 @@ function extractEvidence(log: string): EvidenceLine[] {
 }
 
 function extractFiles(log: string) {
-  const matches = log.match(/(?:\.\/)?(?:src|app|pages|components|lib|prisma)\/[A-Za-z0-9_./-]+\.(?:tsx|ts|jsx|js|mjs|cjs|prisma)/g) ?? [];
+  const matches = log.match(/(?:\.\/)?(?:(?:src|app|pages|components|lib|prisma)\/[A-Za-z0-9_./-]+\.(?:tsx|ts|jsx|js|mjs|cjs|prisma)|package\.json|next\.config\.[cm]?[jt]s|tsconfig\.json|\.env\.example|vercel\.json)/g) ?? [];
   return Array.from(new Set(matches.map((file) => file.replace(/^\.\//, "")))).slice(0, 8);
 }
 

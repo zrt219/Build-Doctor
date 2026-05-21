@@ -14,7 +14,12 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    report: generateIncidentReport(parsed.data.diagnosis),
+    report: generateIncidentReport(parsed.data.diagnosis, {
+      providerStatus: parsed.data.providerStatus,
+      cachedProviderReview: parsed.data.cachedProviderReview,
+      selectedSolutionSuggestions: parsed.data.selectedSolutionSuggestions,
+      autofillFixPlan: parsed.data.autofillFixPlan,
+    }),
     format: "markdown",
     rawLogStored: false,
   });

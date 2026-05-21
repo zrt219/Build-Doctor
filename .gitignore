@@ -7,3 +7,5 @@ coverage/
 *.tsbuildinfo
 
 .vercel
+.omx/
+test-results/

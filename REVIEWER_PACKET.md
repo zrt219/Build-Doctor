@@ -85,11 +85,11 @@ Supabase schema was applied to project `gajpnqqfkjtmqdnufbcf` with:
 
 The schema is also stored in `supabase/schema.sql`.
 
-Verified Supabase write evidence:
+Verified Supabase readiness:
 
-- `suite_events.id`: `e7e452c4-5136-4e45-ae78-9256aba7815d`
-- Event: `reviewer_readiness_probe`
-- Timestamp: `2026-05-21 03:06:12.594041+00`
+- Project `gajpnqqfkjtmqdnufbcf` is reachable through the Supabase connector.
+- Evidence tables are present with RLS enabled.
+- Release hardening removed public integration probe write routes; `/api/integration-health` is read-only.
 
 ## Eval Results
 
@@ -122,7 +122,7 @@ This suite demonstrates customer-facing applied AI workflow design: safety label
 ## Limitations
 
 - This is not a full SaaS platform: no user accounts, billing, or production observability stack.
-- Supabase runtime mode requires Vercel env vars before the deployed apps can write demo events.
+- Supabase runtime mode requires Vercel env vars before deployed apps can persist evidence events through explicitly designed server routes.
 - OpenRouter live mode requires `OPENROUTER_API_KEY`; otherwise AI Gateway returns deterministic fallback output.
 - Any OpenRouter key exposed outside Vercel environment settings should be rotated before live use.
 - A public exact GitHub repo URL is still pending because this local environment has no `gh` CLI and the available GitHub connector exposes file operations for existing repos, not repository creation.

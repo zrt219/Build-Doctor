@@ -36,7 +36,7 @@ src/components/DeploymentCard.tsx:42:19`,
   },
   {
     id: "module-not-found",
-    title: "Module not found cannot resolve",
+    title: "Unresolved module import",
     expected: "MODULE_NOT_FOUND",
     requiredFixSignals: ["dependency", "import", "path"],
     log: `[SIMULATED VERCEL LOG]
@@ -96,5 +96,85 @@ npm ERR! code ERESOLVE
 npm ERR! ERESOLVE unable to resolve dependency tree
 npm ERR! peer dependency react@"^18" from legacy-widget@1.2.0
 npm ERR! Fix the upstream dependency conflict, or retry this command with --legacy-peer-deps`,
+  },
+  {
+    id: "package-json-parse",
+    title: "Invalid package.json syntax",
+    expected: "PACKAGE_JSON_PARSE",
+    requiredFixSignals: ["package.json", "JSON", "manifest"],
+    log: `[SIMULATED VERCEL LOG]
+npm ERR! code EJSONPARSE
+npm ERR! Failed to parse package.json
+npm ERR! JSON.parse Unexpected token } in JSON at position 842 while parsing near "scripts"
+package.json`,
+  },
+  {
+    id: "spawn-permission",
+    title: "Build script permission denied",
+    expected: "SPAWN_PERMISSION",
+    requiredFixSignals: ["script", "permission", "build"],
+    log: `[SIMULATED VERCEL LOG]
+Error: spawn ./scripts/generate-assets.sh EACCES
+permission denied: ./scripts/generate-assets.sh
+Command "npm run build" exited with 126`,
+  },
+  {
+    id: "pnpm-lockfile-mismatch",
+    title: "pnpm frozen lockfile mismatch",
+    expected: "PNPM_LOCKFILE_MISMATCH",
+    requiredFixSignals: ["pnpm", "lockfile", "package"],
+    log: `[SIMULATED VERCEL LOG]
+ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json
+Command "pnpm install --frozen-lockfile" exited with 1`,
+  },
+  {
+    id: "next-static-generation",
+    title: "Next.js prerender failure",
+    expected: "NEXT_STATIC_GENERATION_ERROR",
+    requiredFixSignals: ["dynamic", "prerender", "build"],
+    log: `[SIMULATED VERCEL LOG]
+Error occurred prerendering page "/reports".
+Export encountered errors on following paths: /reports
+Generating static pages failed`,
+  },
+  {
+    id: "app-route-handler",
+    title: "App Router route handler failed",
+    expected: "APP_ROUTER_ROUTE_HANDLER_ERROR",
+    requiredFixSignals: ["route", "handler", "typecheck"],
+    log: `[SIMULATED VERCEL LOG]
+Route handler /api/report failed during build validation
+src/app/api/report/route.ts
+Failed to collect page data for /api/report`,
+  },
+  {
+    id: "serverless-function-limit",
+    title: "Serverless function limit exceeded",
+    expected: "SERVERLESS_FUNCTION_LIMIT",
+    requiredFixSignals: ["function", "limit", "Vercel"],
+    log: `[SIMULATED VERCEL LOG]
+Serverless Function has exceeded the maximum execution duration.
+FUNCTION_INVOCATION_TIMEOUT at /api/diagnose
+function size limit may be exceeded`,
+  },
+  {
+    id: "eslint-build-error",
+    title: "ESLint blocks build",
+    expected: "ESLINT_BUILD_ERROR",
+    requiredFixSignals: ["lint", "build", "rule"],
+    log: `[SIMULATED VERCEL LOG]
+Linting and checking validity of types ...
+ESLint: React Hook useEffect has a missing dependency.
+Failed to compile due to ESLint errors`,
+  },
+  {
+    id: "vite-build-error",
+    title: "Vite import resolution failed",
+    expected: "VITE_BUILD_ERROR",
+    requiredFixSignals: ["Vite", "import", "build"],
+    log: `[SIMULATED VERCEL LOG]
+vite build
+Rollup failed to resolve import "@/widgets/MissingWidget" from "src/main.tsx"
+Transform failed with 1 error`,
   },
 ];

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
 import { auditResumeClaims, generateReport, runEvalSuite } from "@/lib/rag-auditor";
+import { activeWorkflowStepId, suiteWorkflowSteps } from "@/lib/suite";
 
 describe("Resume Evidence RAG Auditor", () => {
   it("verifies claims with local evidence", () => {
@@ -28,6 +29,20 @@ describe("Resume Evidence RAG Auditor", () => {
     const audit = auditResumeClaims({ jobDescription: "RAG retrieval evals", claims: ["Built Resume Evidence RAG Auditor with retrieval and evals."] });
     expect(audit.auditedClaims[0].jobOverlap.length).toBeGreaterThan(0);
     expect(audit.tailoredBullets[0]).toContain("evidence:");
+  });
+
+  it("covers the shared workflow report export step", () => {
+    const exportStep = suiteWorkflowSteps.find((step) => step.id === activeWorkflowStepId);
+    const audit = auditResumeClaims({
+      jobDescription: "AI engineering role focused on build diagnostics, traceability, patch plans, and evidence reports.",
+      claims: ["Built Vercel Build Doctor Agent with log parsing, redaction, structured reports, and eval harness."],
+    });
+    const report = generateReport(audit);
+
+    expect(exportStep?.label).toBe("Export report");
+    expect(audit.summary.verified).toBe(1);
+    expect(report).toContain("Resume Evidence RAG Audit Report");
+    expect(report).toContain("Tailored Bullets");
   });
 
   it("reports Supabase fallback mode safely", async () => {

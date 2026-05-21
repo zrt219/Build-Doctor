@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
+import { activeWorkflowStepId, suiteWorkflowSteps } from "@/lib/suite";
 import { generateAuditReport, generateWorkflow, runEvalSuite } from "@/lib/workflow-studio";
 
 describe("Enterprise Agent Workflow Studio", () => {
@@ -27,6 +28,22 @@ describe("Enterprise Agent Workflow Studio", () => {
     const report = generateAuditReport(generateWorkflow({ objective: "Update a case with approval", selectedTools: ["ticket_update"], riskLevel: "medium" }));
     expect(report).toContain("Enterprise Agent Workflow Audit Report");
     expect(report).toContain("Approval Gates");
+  });
+
+  it("covers the shared workflow patch suggestion step", () => {
+    const patchStep = suiteWorkflowSteps.find((step) => step.id === activeWorkflowStepId);
+    const workflow = generateWorkflow({
+      objective: "Suggest a small patch for a failed Vercel build after evidence review",
+      selectedTools: ["policy_search", "ticket_update", "human_approval"],
+      riskLevel: "medium",
+      dataClass: "internal",
+    });
+    const report = generateAuditReport(workflow);
+
+    expect(patchStep?.label).toBe("Suggest patch");
+    expect(workflow.readiness.launchChecklist).toContain("Export audit report after workflow simulation.");
+    expect(workflow.approvalGates.length).toBeGreaterThan(0);
+    expect(report).toContain("Agent Graph");
   });
 
   it("reports Supabase fallback mode safely", async () => {

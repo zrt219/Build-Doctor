@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ExternalLink, GitBranch, RadioTower, ShieldCheck } from "lucide-react";
 import { runEvalSuite } from "@/lib/build-doctor";
-import { suiteApps, suiteDemoFlow } from "@/lib/suite-metadata";
+import { suiteApps, suiteDemoFlow, suiteWorkflowSteps } from "@/lib/suite-metadata";
 import { InfoTip } from "./InfoTip";
 import { SocialLinks } from "./SocialLinks";
 import { StatusChip } from "./StatusChip";
@@ -44,7 +44,7 @@ export function SuiteHub() {
 
       <section className="mb-8 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
         <div className="rounded-lg border border-line bg-panel/85 p-7 shadow-glow">
-          <p className="text-xs font-semibold uppercase tracking-[0.26em] text-cyan">Recruiter-ready AI engineering system</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Employer-facing AI engineering system</p>
           <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight text-white md:text-6xl">One suite for deploy debugging, agent safety, AI gateway routing, and evidence-grounded resume proof.</h1>
           <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
             Four separate Vercel apps are connected through one premium command center. Every demo is deterministic, explicitly labeled, production deployed, and built to show applied AI product engineering without fake integrations.
@@ -56,7 +56,7 @@ export function SuiteHub() {
             </p>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/15 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:bg-cyan/25">
+            <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/10 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:bg-cyan/20">
               Start guided demo <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a href="https://github.com/zrt219" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line bg-black/30 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:border-white/45">
@@ -121,6 +121,26 @@ export function SuiteHub() {
             </div>
           </article>
         ))}
+      </section>
+
+      <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">App-spanning workflow</p>
+            <h2 className="mt-2 text-2xl font-semibold text-white">Paste build logs {"->"} diagnose root cause {"->"} show trace {"->"} suggest patch {"->"} export report.</h2>
+          </div>
+          <StatusChip kind="simulated" label="Deterministic demo" />
+        </div>
+        <div className="mt-5 grid gap-3 lg:grid-cols-5">
+          {suiteWorkflowSteps.map((step, index) => (
+            <a key={step.id} href={step.href} className="rounded-md border border-line bg-black/30 p-4 text-inherit no-underline hover:border-cyan/60">
+              <p className="font-mono text-xs text-cyan">STEP {index + 1} / {step.appName}</p>
+              <h3 className="mt-2 text-lg font-semibold text-white">{step.label}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{step.plainEnglish}</p>
+              <p className="mt-3 rounded-sm border border-dashed border-cyan/35 bg-cyan/5 px-2 py-1 text-xs uppercase tracking-[0.12em] text-slate-200">{step.output}</p>
+            </a>
+          ))}
+        </div>
       </section>
 
       <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">

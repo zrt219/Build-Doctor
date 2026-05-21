@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { routeRequest, routeRequestWithOpenRouter, runEvalSuite } from "@/lib/gateway";
 import { getIntegrationHealth, recordSuiteEvent } from "@/lib/integrations";
+import { activeWorkflowStepId, suiteWorkflowSteps } from "@/lib/suite";
 
 describe("AI Gateway Failover Playground", () => {
   it("routes normal balanced requests without fallback", () => {
@@ -28,6 +29,16 @@ describe("AI Gateway Failover Playground", () => {
 
   it("passes eval fixtures", () => {
     expect(runEvalSuite().score).toBe(100);
+  });
+
+  it("covers the shared workflow trace step", () => {
+    const traceStep = suiteWorkflowSteps.find((step) => step.id === activeWorkflowStepId);
+    const result = routeRequest({ prompt: "trace a failed deploy diagnosis", scenario: "primary_outage", policy: "highest_reliability" });
+
+    expect(traceStep?.label).toBe("Show trace");
+    expect(result.trace.length).toBeGreaterThanOrEqual(5);
+    expect(result.trace.some((event) => event.step === "provider_selected")).toBe(true);
+    expect(result.safetyNotes.join(" ")).toContain("deterministic");
   });
 
   it("uses OpenRouter fallback when no API key is configured", async () => {

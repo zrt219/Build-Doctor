@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { CheckCircle2, ExternalLink, FileSearch, Info, ShieldAlert } from "lucide-react";
-import { auditRequestSchema, auditResumeClaims, evidenceCorpus } from "@/lib/rag-auditor";
+import { auditRequestSchema, auditResumeClaims, evidenceCorpus, generateReport } from "@/lib/rag-auditor";
 import { socialLinks } from "@/lib/social";
-import { suiteLinks, suiteProof } from "@/lib/suite";
+import { activeWorkflowStepId, suiteLinks, suiteProof, suiteWorkflowSteps } from "@/lib/suite";
 
 function InfoTip({ label, children }: { label: string; children: string }) {
   return (
@@ -26,6 +26,7 @@ export function ResumeAuditorApp() {
   const [claimsText, setClaimsText] = useState(defaults.claims.join("\n"));
   const claims = claimsText.split("\n").map((claim) => claim.trim()).filter(Boolean);
   const audit = useMemo(() => auditResumeClaims({ jobDescription, claims }), [jobDescription, claimsText]);
+  const report = useMemo(() => generateReport(audit), [audit]);
   const matchTerms = Array.from(new Set(audit.auditedClaims.flatMap((claim) => claim.jobOverlap))).slice(0, 10);
 
   return (
@@ -37,7 +38,7 @@ export function ResumeAuditorApp() {
             <strong>Resume Evidence RAG Auditor</strong>
           </div>
           <nav className="nav" aria-label="Suite navigation">
-            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href}>{link.label}</a>)}
+            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href} aria-current={link.label === "Resume Auditor" ? "page" : undefined}>{link.label}</a>)}
           </nav>
         </div>
         <nav className="nav" aria-label="ZRT social links" style={{ marginTop: 14 }}>
@@ -103,6 +104,19 @@ export function ResumeAuditorApp() {
         </div>
       </section>
 
+      <section className="panel" style={{ padding: 24, marginTop: 16 }}>
+        <h2>Cross-App Build Repair Workflow <InfoTip label="Export report">The final handoff packages verified evidence and report text without inflating claims.</InfoTip></h2>
+        <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+          {suiteWorkflowSteps.map((step, index) => (
+            <a key={step.id} className={step.id === activeWorkflowStepId ? "metric workflow-active" : "metric"} href={step.href} style={{ textDecoration: "none" }}>
+              <div className="mono muted">STEP {index + 1} | {step.appName}</div>
+              <strong style={{ fontSize: 17 }}>{step.label}</strong>
+              <p className={step.id === activeWorkflowStepId ? "chip pass" : "chip"}>{step.output}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
           <h2>Evidence Gaps + Checklist <InfoTip label="Evidence gap">A missing proof point. The safest action is to remove the claim, rewrite it, or attach evidence.</InfoTip></h2>
@@ -119,6 +133,11 @@ export function ResumeAuditorApp() {
           <h2>Grounded Bullet Export <InfoTip label="Grounded bullet">A resume bullet generated only from supported claims, not inflated claims.</InfoTip></h2>
           <pre className="mono" style={{ whiteSpace: "pre-wrap", color: "#dceaff", maxHeight: 340, overflow: "auto" }}>{audit.tailoredBullets.map((bullet) => `- ${bullet}`).join("\n")}</pre>
         </div>
+      </section>
+
+      <section className="panel" style={{ padding: 24, marginTop: 16 }}>
+        <h2>Markdown Report Export <InfoTip label="Markdown report">A copyable report for reviewer handoff, generated from the current audited claims.</InfoTip></h2>
+        <pre className="mono" style={{ whiteSpace: "pre-wrap", color: "#dceaff", maxHeight: 360, overflow: "auto" }}>{report}</pre>
       </section>
     </main>
   );

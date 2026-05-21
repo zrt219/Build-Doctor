@@ -9,8 +9,9 @@
 body {
   margin: 0;
   background:
-    radial-gradient(circle at top left, rgba(109, 216, 255, 0.08), transparent 30rem),
-    linear-gradient(135deg, #080b10 0%, #101720 52%, #080b10 100%);
+    radial-gradient(circle at top left, rgba(109, 216, 255, 0.12), transparent 32rem),
+    radial-gradient(circle at 78% 12%, rgba(214, 170, 82, 0.1), transparent 26rem),
+    linear-gradient(135deg, #101720 0%, #172231 52%, #111827 100%);
   color: #eef4fb;
 }
 
@@ -20,8 +21,8 @@ body::before {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: linear-gradient(to bottom, black, transparent 84%);
 }

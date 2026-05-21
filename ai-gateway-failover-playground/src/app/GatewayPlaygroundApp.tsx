@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ArrowRight, ExternalLink, Gauge, Info, RadioTower, ShieldAlert } from "lucide-react";
 import { circuitBreakers, providers, routeRequest, type ChatRequest } from "@/lib/gateway";
 import { socialLinks } from "@/lib/social";
-import { suiteLinks, suiteProof } from "@/lib/suite";
+import { activeWorkflowStepId, suiteLinks, suiteProof, suiteWorkflowSteps } from "@/lib/suite";
 
 const scenarioNotes: Record<NonNullable<ChatRequest["scenario"]>, string> = {
   normal: "All providers are healthy; policy decides the route.",
@@ -46,7 +46,7 @@ export function GatewayPlaygroundApp() {
             <strong>AI Gateway Failover Playground</strong>
           </div>
           <nav className="nav" aria-label="Suite navigation">
-            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href}>{link.label}</a>)}
+            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href} aria-current={link.label === "AI Gateway" ? "page" : undefined}>{link.label}</a>)}
           </nav>
         </div>
         <nav className="nav" aria-label="ZRT social links" style={{ marginTop: 14 }}>
@@ -112,6 +112,19 @@ export function GatewayPlaygroundApp() {
           <p className={routed.dashboard.budgetStatus === "PASS" ? "chip pass" : "chip review"} style={{ marginLeft: 8 }}>Cost {routed.dashboard.budgetStatus}</p>
           {routed.readiness.reasons.map((reason) => <p key={reason} className="muted">{reason}</p>)}
           {routed.safetyNotes.map((note) => <p key={note} className="chip" style={{ marginRight: 8 }}>{note}</p>)}
+        </div>
+      </section>
+
+      <section className="panel" style={{ padding: 24, marginTop: 16 }}>
+        <h2>Cross-App Build Repair Workflow <InfoTip label="Cross-app workflow">The shared reviewer path across all four demos, from pasted logs through final report export.</InfoTip></h2>
+        <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+          {suiteWorkflowSteps.map((step, index) => (
+            <a key={step.id} className={step.id === activeWorkflowStepId ? "metric workflow-active" : "metric"} href={step.href} style={{ textDecoration: "none" }}>
+              <div className="mono muted">STEP {index + 1} | {step.appName}</div>
+              <strong style={{ fontSize: 17 }}>{step.label}</strong>
+              <p className={step.id === activeWorkflowStepId ? "chip pass" : "chip"}>{step.output}</p>
+            </a>
+          ))}
         </div>
       </section>
 

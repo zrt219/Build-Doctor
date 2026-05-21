@@ -22,13 +22,16 @@ export default function CaseStudyPage() {
       </header>
 
       <section className="rounded-lg border border-line bg-panel/85 p-7 shadow-glow">
-        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-cyan">Recruiter-facing AI engineering proof</p>
-        <h1 className="mt-4 text-4xl font-semibold text-white md:text-5xl">Vercel Build Doctor Agent</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Employer-facing AI developer tool case study</p>
+        <h1 className="mt-4 text-4xl font-semibold text-white md:text-5xl">Build Doctor Case Study</h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
-          A deterministic agent workflow for diagnosing failed builds, deployment misconfigurations, runtime errors, and unsafe log handling. It is designed to demonstrate practical AI product engineering, not a generic chatbot.
+          Build Doctor helps developers turn failed Next.js and Vercel build logs into a clear debugging report. The local deterministic engine owns the diagnosis; optional DeepSeek review can improve the explanation but cannot replace the source-of-truth result.
+        </p>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+          During live testing, the DeepSeek free model returned a provider rate limit. Build Doctor handled the condition safely by preserving the deterministic diagnosis, surfacing a clear provider status, and showing a cached demo review that is explicitly labeled as non-live output.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/15 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan/25">
+          <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/10 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan/20">
             Open Build Doctor
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 rounded-md border border-line bg-black/30 px-4 py-2 text-sm font-semibold text-white hover:border-white/45">
@@ -40,19 +43,34 @@ export default function CaseStudyPage() {
       <section className="mt-6 grid gap-4 md:grid-cols-3">
         <div className="rounded-lg border border-line bg-black/35 p-5">
           <Route className="h-5 w-5 text-cyan" aria-hidden="true" />
-          <h2 className="mt-3 font-semibold text-white">Agent Workflow</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Ingest, redact, classify, extract evidence, map recipes, emit patch and verification plans.</p>
+          <h2 className="mt-3 font-semibold text-white">Deterministic Workflow</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Paste logs, redact secrets, classify the failure, extract evidence, show trace, suggest patch, export report.</p>
         </div>
         <div className="rounded-lg border border-line bg-black/35 p-5">
           <ShieldCheck className="h-5 w-5 text-gold" aria-hidden="true" />
-          <h2 className="mt-3 font-semibold text-white">Security First</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Secrets are redacted before diagnosis, display, report generation, or optional provider calls.</p>
+          <h2 className="mt-3 font-semibold text-white">Safety Model</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Secrets are redacted before outputs or provider calls. Paid models are blocked by default and no patch is applied automatically.</p>
         </div>
         <div className="rounded-lg border border-line bg-black/35 p-5">
           <CheckCircle2 className="h-5 w-5 text-cyan" aria-hidden="true" />
-          <h2 className="mt-3 font-semibold text-white">Eval Harness</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Eight fixture logs test category correctness, fix relevance, evidence extraction, and redaction safety.</p>
+          <h2 className="mt-3 font-semibold text-white">Test Coverage</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Fixture logs test category correctness, fix relevance, evidence extraction, redaction safety, and provider failure handling.</p>
         </div>
+      </section>
+
+      <section className="mt-6 grid gap-4 md:grid-cols-2">
+        {[
+          ["Problem", "Modern deployment failures often produce long logs that are hard to interpret quickly. Developers need a fast way to identify the likely root cause, preserve the evidence, and create a clear report."],
+          ["Solution", "Build Doctor turns pasted build logs into a structured diagnosis. It redacts secrets, classifies the failure, extracts evidence, creates a deterministic trace, suggests a safe patch draft, and exports a markdown report."],
+          ["Architecture", "The system is deterministic-first. The local engine owns the diagnosis. Optional DeepSeek review through OpenRouter can improve the explanation, but it cannot override the source-of-truth diagnosis."],
+          ["Safety", "Secrets are redacted before outputs or provider calls. Paid models are blocked by default. Model output is parsed, validated, and discarded if invalid."],
+          ["Result", "The project demonstrates applied AI product engineering: workflow design, deterministic guardrails, optional model enrichment, eval/test coverage, and developer-tool UX."],
+        ].map(([title, copy]) => (
+          <article key={title} className="rounded-lg border border-line bg-panel/90 p-5 md:last:col-span-2">
+            <h2 className="text-xl font-semibold text-white">{title}</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">{copy}</p>
+          </article>
+        ))}
       </section>
 
       <section className="mt-6 rounded-lg border border-line bg-panel/90 p-6">

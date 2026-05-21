@@ -15,6 +15,16 @@ export type SuiteApp = {
   evalSummary: string;
 };
 
+export type SuiteWorkflowStep = {
+  id: string;
+  appId: string;
+  appName: string;
+  label: string;
+  plainEnglish: string;
+  output: string;
+  href: string;
+};
+
 export const suiteApps: SuiteApp[] = [
   {
     id: "build-doctor",
@@ -82,10 +92,52 @@ export const suiteApps: SuiteApp[] = [
   },
 ];
 
-export const suiteDemoFlow = [
-  "Diagnose a failed build in Build Doctor.",
-  "Route an AI request through Gateway Failover.",
-  "Design an approval-gated enterprise workflow.",
-  "Verify resume and project claims with RAG Auditor.",
-  "Export evidence links and reports for recruiter review.",
+export const suiteWorkflowSteps: SuiteWorkflowStep[] = [
+  {
+    id: "paste-build-logs",
+    appId: "build-doctor",
+    appName: "Build Doctor",
+    label: "Paste build logs",
+    plainEnglish: "Start with a failed Vercel or Next.js build log.",
+    output: "Secret-redacted log input",
+    href: "https://vercel-build-doctor-agent.vercel.app/build-doctor#diagnose",
+  },
+  {
+    id: "diagnose-root-cause",
+    appId: "build-doctor",
+    appName: "Build Doctor",
+    label: "Diagnose root cause",
+    plainEnglish: "Classify the first fatal signal and expose the supporting evidence lines.",
+    output: "Root cause, confidence, evidence lines",
+    href: "https://vercel-build-doctor-agent.vercel.app/build-doctor#diagnose",
+  },
+  {
+    id: "show-trace",
+    appId: "gateway-failover",
+    appName: "AI Gateway",
+    label: "Show trace",
+    plainEnglish: "Display a deterministic request trace that explains the route and fallback decision.",
+    output: "Trace timeline with status labels",
+    href: "https://ai-gateway-failover-playground.vercel.app",
+  },
+  {
+    id: "suggest-patch",
+    appId: "enterprise-workflow",
+    appName: "Enterprise Studio",
+    label: "Suggest patch",
+    plainEnglish: "Turn the diagnosis into a guarded patch plan with approval and verification checks.",
+    output: "Patch checklist and audit gate",
+    href: "https://enterprise-agent-workflow-studio.vercel.app",
+  },
+  {
+    id: "export-report",
+    appId: "resume-rag-auditor",
+    appName: "Resume Auditor",
+    label: "Export report",
+    plainEnglish: "Export a grounded evidence report that stays within verified project scope.",
+    output: "Markdown report for reviewer handoff",
+    href: "https://resume-evidence-rag-auditor.vercel.app",
+  },
 ];
+
+export const suiteDemoFlow = suiteWorkflowSteps.map((step) => `${step.label}: ${step.output}.`);
