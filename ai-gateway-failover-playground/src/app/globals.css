@@ -8,6 +8,7 @@ body {
     linear-gradient(135deg, #071018, #101720 48%, #080b10);
   font-family: Arial, Helvetica, sans-serif;
 }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 84%); }
 a { color: inherit; }
 button, input, textarea, select { font: inherit; }
 .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
@@ -15,9 +16,15 @@ button, input, textarea, select { font: inherit; }
 .grid { display: grid; gap: 16px; }
 .two { grid-template-columns: 1fr 1fr; }
 .three { grid-template-columns: repeat(3, 1fr); }
-.chip { display: inline-flex; gap: 8px; align-items: center; border: 1px solid #6dd8ff; border-radius: 999px; padding: 7px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+.chip { display: inline-flex; gap: 8px; align-items: center; border: 1px solid #6dd8ff; border-radius: 999px; padding: 7px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; text-decoration: none; }
 .chip.review { border-style: dashed; border-color: #d6aa52; }
 .chip.blocked { border-width: 2px; border-color: #f2f2f2; }
 .muted { color: #a7b6c8; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.button { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #67cef4; border-radius: 8px; background: rgba(86,185,255,.12); color: #fff; padding: 10px 13px; font-weight: 700; text-decoration: none; }
+.button.secondary { border-color: #31445b; background: rgba(0,0,0,.24); color: #dceaff; }
+.field { width: 100%; margin-top: 8px; padding: 11px 12px; border: 1px solid #31445b; border-radius: 8px; background: #090f18; color: #edf5ff; }
+.metric { border: 1px solid #31445b; border-radius: 8px; padding: 14px; background: rgba(0,0,0,.24); }
+.metric strong { display: block; margin-top: 8px; font-size: 28px; color: #fff; }
+.nav { display: flex; gap: 10px; flex-wrap: wrap; }
 @media (max-width: 850px) { .two, .three { grid-template-columns: 1fr; } }

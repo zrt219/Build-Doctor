@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ServerCog } from "lucide-react";
+import { ArrowLeft, ArrowRight, ServerCog } from "lucide-react";
 import { sampleLogs } from "@/lib/sample-logs";
 import type { Diagnosis } from "@/lib/schemas";
+import { suiteApps } from "@/lib/suite-metadata";
 import { CaseStudySection } from "./CaseStudySection";
 import { DiagnosisPanel } from "./DiagnosisPanel";
 import { EvidenceTable } from "./EvidenceTable";
@@ -77,6 +78,17 @@ export function BuildDoctorApp() {
             <p className="font-semibold text-white">Vercel Build Doctor Agent</p>
           </div>
         </div>
+        <nav className="flex flex-wrap gap-2" aria-label="Suite navigation">
+          <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-line bg-black/25 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-200 hover:border-cyan/70 hover:text-white">
+            <ArrowLeft className="h-3 w-3" aria-hidden="true" />
+            Suite
+          </Link>
+          {suiteApps.slice(1).map((app) => (
+            <a key={app.id} href={app.demoUrl} className="inline-flex items-center gap-2 rounded-full border border-line bg-black/25 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-200 hover:border-cyan/70 hover:text-white">
+              {app.id.replace("-", " ")}
+            </a>
+          ))}
+        </nav>
         <div className="flex flex-wrap gap-2">
           <StatusChip kind="simulated" label="Demo mode" />
           <StatusChip kind="locked" label="No raw log storage" />
@@ -110,6 +122,19 @@ export function BuildDoctorApp() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mb-8 grid gap-4 md:grid-cols-3">
+        {[
+          ["Suite role", "First stop in the connected AI systems demo: turn an incident signal into evidence."],
+          ["Recruiter signal", "Shows failure analysis, structured outputs, redaction safety, and eval discipline."],
+          ["Next handoff", "Use the incident report as context for gateway routing, workflow approval, and resume evidence."],
+        ].map(([title, copy]) => (
+          <div key={title} className="rounded-lg border border-line bg-black/30 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">{title}</p>
+            <p className="mt-3 text-sm leading-6 text-slate-300">{copy}</p>
+          </div>
+        ))}
       </section>
 
       <div id="diagnose" className="grid gap-5 lg:grid-cols-[330px_1fr]">

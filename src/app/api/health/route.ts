@@ -14,6 +14,8 @@ export async function GET() {
       diagnosisApi: true,
       reportExport: true,
       secretRedaction: true,
+      suiteHub: true,
+      buildDoctorRoute: "/build-doctor",
     },
     generatedAt: new Date().toISOString(),
   });

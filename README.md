@@ -1,3 +1,14 @@
+# ZRT Vercel AI Systems Suite
+
+The production root route is now the connected suite hub for four separate Vercel AI portfolio apps:
+
+- Vercel Build Doctor Agent: `/build-doctor`
+- Enterprise Agent Workflow Studio: `https://enterprise-agent-workflow-studio.vercel.app`
+- AI Gateway Failover Playground: `https://ai-gateway-failover-playground.vercel.app`
+- Resume Evidence RAG Auditor: `https://resume-evidence-rag-auditor.vercel.app`
+
+Every app keeps GitHub as the first proof link: `https://github.com/zrt219`.
+
 # Vercel Build Doctor Agent
 
 ## What It Does
@@ -96,6 +107,13 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+Routes:
+
+- `/` suite command center
+- `/build-doctor` Build Doctor demo tool
+- `/case-study` Build Doctor recruiter-facing case study
+- `/api/health`, `/api/eval`, `/api/diagnose`, `/api/report`
 
 ## Environment Variables
 

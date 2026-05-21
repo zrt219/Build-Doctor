@@ -13,7 +13,7 @@ export default function CaseStudyPage() {
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-black/35 px-4 py-3">
         <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-slate-200 hover:text-white">
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to Doctor
+          Back to Suite
         </Link>
         <div className="flex flex-wrap gap-2">
           <StatusChip kind="simulated" label="Case study demo" />
@@ -27,6 +27,14 @@ export default function CaseStudyPage() {
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
           A deterministic agent workflow for diagnosing failed builds, deployment misconfigurations, runtime errors, and unsafe log handling. It is designed to demonstrate practical AI product engineering, not a generic chatbot.
         </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/15 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan/25">
+            Open Build Doctor
+          </Link>
+          <Link href="/" className="inline-flex items-center gap-2 rounded-md border border-line bg-black/30 px-4 py-2 text-sm font-semibold text-white hover:border-white/45">
+            View full suite
+          </Link>
+        </div>
       </section>
 
       <section className="mt-6 grid gap-4 md:grid-cols-3">

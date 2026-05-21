@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CheckCircle2, ExternalLink, FileSearch, ShieldAlert } from "lucide-react";
 import { auditRequestSchema, auditResumeClaims, evidenceCorpus } from "@/lib/rag-auditor";
 import { socialLinks } from "@/lib/social";
+import { suiteLinks, suiteProof } from "@/lib/suite";
 
 export function ResumeAuditorApp() {
   const defaults = auditRequestSchema.parse({});
@@ -10,16 +12,22 @@ export function ResumeAuditorApp() {
   const [claimsText, setClaimsText] = useState(defaults.claims.join("\n"));
   const claims = claimsText.split("\n").map((claim) => claim.trim()).filter(Boolean);
   const audit = useMemo(() => auditResumeClaims({ jobDescription, claims }), [jobDescription, claimsText]);
+  const matchTerms = Array.from(new Set(audit.auditedClaims.flatMap((claim) => claim.jobOverlap))).slice(0, 10);
 
   return (
     <main className="shell">
-      <header className="panel" style={{ padding: 18, display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <div>
-          <div className="muted mono" style={{ fontSize: 12, letterSpacing: ".18em", textTransform: "uppercase" }}>ZRT Evidence Systems Lab</div>
-          <strong>Resume Evidence RAG Auditor</strong>
+      <header className="panel" style={{ padding: 18 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div className="muted mono" style={{ fontSize: 12, letterSpacing: ".18em", textTransform: "uppercase" }}>ZRT Vercel AI Systems Suite</div>
+            <strong>Resume Evidence RAG Auditor</strong>
+          </div>
+          <nav className="nav" aria-label="Suite navigation">
+            {suiteLinks.map((link) => <a key={link.href} className="chip" href={link.href}>{link.label}</a>)}
+          </nav>
         </div>
-        <nav style={{ display: "flex", gap: 10, flexWrap: "wrap" }} aria-label="ZRT social links">
-          {socialLinks.map((link) => <a key={link.href} className="chip" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>)}
+        <nav className="nav" aria-label="ZRT social links" style={{ marginTop: 14 }}>
+          {socialLinks.map((link) => <a key={link.href} className="chip" href={link.href} target="_blank" rel="noreferrer">{link.label}<ExternalLink size={12} /></a>)}
         </nav>
       </header>
 
@@ -27,13 +35,18 @@ export function ResumeAuditorApp() {
         <div className="panel" style={{ padding: 28 }}>
           <span className="chip review">DEMO JSON RETRIEVAL</span>
           <h1 style={{ fontSize: 48, lineHeight: 1, margin: "24px 0 16px" }}>Audit resume claims against project evidence before tailoring bullets.</h1>
-          <p className="muted" style={{ fontSize: 18, lineHeight: 1.65 }}>Editable job description and claim list with local retrieval, evidence gaps, grounded bullets, and readiness checks.</p>
+          <p className="muted" style={{ fontSize: 18, lineHeight: 1.65 }}>Editable job description, local retrieval corpus, claim verification states, unverified-claim flags, evidence gaps, and grounded bullet export.</p>
+          <div className="nav" style={{ marginTop: 18 }}>{suiteProof.map((item) => <span key={item} className="chip pass">{item}</span>)}</div>
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Readiness</h2>
-          <p className={audit.readiness.status === "READY" ? "chip pass" : "chip review"}>{audit.readiness.status}</p>
-          <p style={{ fontSize: 42, margin: "12px 0" }}>{audit.summary.score}%</p>
-          <p className="muted">{audit.summary.verified}/{audit.summary.total} claims verified.</p>
+          <h2>Readiness Console</h2>
+          <div className="grid two">
+            <div className="metric"><span className="muted">Readiness</span><strong>{audit.readiness.status}</strong></div>
+            <div className="metric"><span className="muted">Verified score</span><strong>{audit.summary.score}%</strong></div>
+            <div className="metric"><span className="muted">Verified</span><strong>{audit.summary.verified}/{audit.summary.total}</strong></div>
+            <div className="metric"><span className="muted">Evidence records</span><strong>{evidenceCorpus.length}</strong></div>
+          </div>
+          <p className="muted" style={{ marginTop: 14 }}>Matched job terms: {matchTerms.join(", ") || "none yet"}</p>
         </div>
       </section>
 
@@ -41,13 +54,19 @@ export function ResumeAuditorApp() {
         <div className="panel" style={{ padding: 24 }}>
           <h2>Inputs</h2>
           <label className="muted" htmlFor="jd">Job description</label>
-          <textarea id="jd" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} style={{ width: "100%", minHeight: 120, marginTop: 8, padding: 12, borderRadius: 8, border: "1px solid #31445b", background: "#090f18", color: "#edf5ff" }} />
-          <label className="muted" htmlFor="claims">Claims, one per line</label>
-          <textarea id="claims" value={claimsText} onChange={(event) => setClaimsText(event.target.value)} style={{ width: "100%", minHeight: 150, marginTop: 8, padding: 12, borderRadius: 8, border: "1px solid #31445b", background: "#090f18", color: "#edf5ff" }} />
+          <textarea id="jd" className="field" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} style={{ minHeight: 130 }} />
+          <label className="muted" htmlFor="claims" style={{ display: "block", marginTop: 12 }}>Claims, one per line</label>
+          <textarea id="claims" className="field" value={claimsText} onChange={(event) => setClaimsText(event.target.value)} style={{ minHeight: 160 }} />
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Evidence Corpus</h2>
-          {evidenceCorpus.map((item) => <p key={item.id} className="muted"><strong>{item.title}</strong>: {item.tags.join(", ")}</p>)}
+          <h2><FileSearch size={20} /> Evidence Corpus</h2>
+          {evidenceCorpus.map((item) => (
+            <div key={item.id} className="metric" style={{ marginBottom: 10 }}>
+              <strong style={{ fontSize: 18 }}>{item.title}</strong>
+              <p className="muted">{item.proof}</p>
+              <p className="mono muted">{item.tags.join(" | ")}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -55,12 +74,12 @@ export function ResumeAuditorApp() {
         <h2>Claim Review</h2>
         <div className="grid">
           {audit.auditedClaims.map((claim) => (
-            <div key={claim.claim} style={{ border: "1px solid #31445b", borderRadius: 8, padding: 14, background: "rgba(0,0,0,.24)" }}>
-              <p className={claim.status === "VERIFIED" ? "chip pass" : "chip review"}>{claim.status}</p>
-              <strong>{claim.claim}</strong>
+            <div key={claim.claim} className="metric" style={{ borderStyle: claim.status === "VERIFIED" ? "solid" : "dashed" }}>
+              <p className={claim.status === "VERIFIED" ? "chip pass" : "chip review"}>{claim.status === "VERIFIED" ? <CheckCircle2 size={13} /> : <ShieldAlert size={13} />}{claim.status}</p>
+              <strong style={{ fontSize: 18 }}>{claim.claim}</strong>
               <p className="muted">Confidence {Math.round(claim.confidence * 100)}% | Job overlap: {claim.jobOverlap.join(", ") || "none"}</p>
               {claim.evidence.map((item) => <p key={item.id} className="muted">Evidence: {item.title} | {item.matchedTags.join(", ")}</p>)}
-              {claim.flags.map((flag) => <p key={flag} className="muted">Flag: {flag}</p>)}
+              {claim.flags.map((flag) => <p key={flag} className="chip review" style={{ marginRight: 8 }}>{flag}</p>)}
             </div>
           ))}
         </div>
@@ -68,12 +87,19 @@ export function ResumeAuditorApp() {
 
       <section className="grid two" style={{ marginTop: 16 }}>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Evidence Gaps</h2>
-          {audit.evidenceGaps.length ? audit.evidenceGaps.map((gap) => <p key={gap.claim} className="chip review" style={{ marginRight: 8 }}>{gap.gap}</p>) : <p className="chip pass">No gaps detected</p>}
+          <h2>Evidence Gaps + Checklist</h2>
+          {audit.evidenceGaps.length ? audit.evidenceGaps.map((gap) => (
+            <div key={gap.claim} className="metric" style={{ marginBottom: 10, borderStyle: "dashed" }}>
+              <p className="chip review">Evidence gap</p>
+              <p className="muted">{gap.claim}</p>
+              <p>{gap.gap}</p>
+            </div>
+          )) : <p className="chip pass">No gaps detected</p>}
+          {audit.readiness.checklist.map((item) => <p key={item} className="chip" style={{ marginRight: 8 }}>{item}</p>)}
         </div>
         <div className="panel" style={{ padding: 24 }}>
-          <h2>Grounded Bullets</h2>
-          <pre className="mono" style={{ whiteSpace: "pre-wrap", color: "#dceaff", maxHeight: 260, overflow: "auto" }}>{audit.tailoredBullets.map((bullet) => `- ${bullet}`).join("\n")}</pre>
+          <h2>Grounded Bullet Export</h2>
+          <pre className="mono" style={{ whiteSpace: "pre-wrap", color: "#dceaff", maxHeight: 340, overflow: "auto" }}>{audit.tailoredBullets.map((bullet) => `- ${bullet}`).join("\n")}</pre>
         </div>
       </section>
     </main>

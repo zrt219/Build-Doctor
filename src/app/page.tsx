@@ -1,5 +1,5 @@
-import { BuildDoctorApp } from "@/components/BuildDoctorApp";
+import { SuiteHub } from "@/components/SuiteHub";
 
 export default function HomePage() {
-  return <BuildDoctorApp />;
+  return <SuiteHub />;
 }
