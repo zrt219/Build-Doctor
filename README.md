@@ -16,6 +16,12 @@ The deterministic engine is the source of truth. Optional LLM review is isolated
 - Build Doctor docs: [`docs/build-doctor.md`](docs/build-doctor.md)
 - Release evidence: [`docs/build-doctor-release-evidence.md`](docs/build-doctor-release-evidence.md)
 
+## Fuji Detail
+
+![Lake Kawaguchiko and Mount Fuji](assets/build-doctor-readme/kawaguchiko-closeup.png)
+
+This close-up frame keeps the README atmospheric without weakening the technical layout.
+
 ## What It Does
 
 Build Doctor supports a five-step workflow:
