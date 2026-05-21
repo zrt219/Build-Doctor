@@ -1,3 +1,5 @@
+![Build Doctor Fuji banner](assets/build-doctor-readme/fuji-banner.png)
+
 # Build Doctor
 
 Build Doctor is a Vercel-deployed developer tool that turns failed Next.js and Vercel build logs into a traceable root-cause diagnosis, safe patch draft, optional DeepSeek review, and exportable markdown incident report.
@@ -63,6 +65,8 @@ Build log input
   -> export markdown report
   -> optional sanitized DeepSeek review
 ```
+
+![Build Doctor Fuji dashboard](assets/build-doctor-readme/fuji-dashboard.png)
 
 Primary implementation areas:
 
