@@ -26,6 +26,36 @@ const metricOptions: Array<{ id: TrackerMetric; label: string }> = [
 
 const pipelineSteps = ["Codex logs", "Session index", "Event counter", "Markdown tracker", "Portfolio stats", "Public UI"];
 
+function selectedMetricDisplay(snapshot: LiveWorkflowTrackerSnapshot, metric: TrackerMetric) {
+  if (metric === "sessionRows") {
+    return {
+      eyebrow: "Selected metric",
+      value: formatMetricNumber(snapshot.sessionIndexRows),
+      label: "Codex session rows",
+      helper: "Session index rows aligned to local session logs in the dated evidence refresh.",
+      source: "Daily Evidence Report",
+    };
+  }
+
+  if (metric === "dailyDelta") {
+    return {
+      eyebrow: "Selected metric",
+      value: formatSignedMetric(snapshot.currentDelta),
+      label: "daily event delta",
+      helper: "Workflow-event growth compared with the previous tracker snapshot.",
+      source: "Workflow Events Tracker",
+    };
+  }
+
+  return {
+    eyebrow: "Current evidence signal",
+    value: formatMetricNumber(snapshot.currentWorkflowEvents),
+    label: "workflow events",
+    helper: "Total workflow records counted in the dated, source-safe evidence refresh.",
+    source: "Workflow Events Tracker",
+  };
+}
+
 export function LiveWorkflowEventsTracker({ snapshot = liveWorkflowTrackerSnapshot, compact = false }: LiveWorkflowEventsTrackerProps) {
   const [metric, setMetric] = useState<TrackerMetric>("workflowEvents");
   const [selectedIndex, setSelectedIndex] = useState(Math.max(snapshot.history.length - 1, 0));
@@ -68,6 +98,12 @@ export function LiveWorkflowEventsTracker({ snapshot = liveWorkflowTrackerSnapsh
       sourceLabel: "Daily Evidence Report",
     },
   ];
+  const activeMetric = selectedMetricDisplay(snapshot, metric);
+
+  function changeMetric(nextMetric: TrackerMetric) {
+    setMetric(nextMetric);
+    setSelectedIndex(Math.max(snapshot.history.length - 1, 0));
+  }
 
   async function copySummary() {
     if (typeof navigator === "undefined" || !navigator.clipboard) {
@@ -112,14 +148,15 @@ export function LiveWorkflowEventsTracker({ snapshot = liveWorkflowTrackerSnapsh
 
       <div className="mt-6 grid gap-4 xl:grid-cols-[0.82fr_1.18fr]">
         <div className="rounded-lg border border-cyan/20 bg-black/35 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">Current evidence signal</p>
-          <p className="mt-4 text-5xl font-semibold leading-none text-white sm:text-6xl">{formatMetricNumber(snapshot.currentWorkflowEvents)}</p>
-          <p className="mt-3 text-lg font-semibold text-slate-100">workflow events</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">{activeMetric.eyebrow}</p>
+          <p className="mt-4 text-5xl font-semibold leading-none text-white sm:text-6xl">{activeMetric.value}</p>
+          <p className="mt-3 text-lg font-semibold text-slate-100">{activeMetric.label}</p>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            {snapshot.sourceLabel} This is not a real-time stream; it is a dated, source-safe aggregate from the local evidence refresh.
+            {activeMetric.helper} This is not a real-time stream; it is a dated, source-safe aggregate from the local evidence refresh.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full border border-cyan/45 bg-cyan/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white">Last refreshed {snapshot.lastRefreshed}</span>
+            <span className="rounded-full border border-line bg-black/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-200">Source {activeMetric.source}</span>
             <span className="rounded-full border border-line bg-black/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-200">Codex mode {snapshot.codexMode}</span>
           </div>
           <div className="mt-5 grid gap-2 text-sm text-slate-300">
@@ -136,10 +173,10 @@ export function LiveWorkflowEventsTracker({ snapshot = liveWorkflowTrackerSnapsh
                 <button
                   key={option.id}
                   type="button"
-                  onClick={() => setMetric(option.id)}
+                  onClick={() => changeMetric(option.id)}
                   aria-pressed={metric === option.id}
                   className={`min-h-10 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.1em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan ${
-                    metric === option.id ? "border-cyan/70 bg-cyan/15 text-white" : "border-line bg-black/25 text-slate-300 hover:border-cyan/50 hover:text-white"
+                    metric === option.id ? "border-cyan/80 bg-cyan/20 text-white shadow-[0_0_0_1px_rgba(109,216,255,0.2)]" : "border-line bg-black/25 text-slate-300 hover:border-cyan/50 hover:bg-cyan/10 hover:text-white"
                   }`}
                 >
                   {option.label}

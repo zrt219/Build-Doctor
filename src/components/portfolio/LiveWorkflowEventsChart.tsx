@@ -21,6 +21,12 @@ const metricLabels: Record<TrackerMetric, string> = {
   dailyDelta: "Daily delta",
 };
 
+const metricDescriptions: Record<TrackerMetric, string> = {
+  workflowEvents: "Total counted workflow records in the dated evidence refresh.",
+  sessionRows: "Codex session index rows aligned to local session logs.",
+  dailyDelta: "Change in workflow events compared with the previous tracker snapshot.",
+};
+
 function metricValue(point: WorkflowEventHistoryPoint, metric: TrackerMetric) {
   if (metric === "workflowEvents") return point.workflowEvents;
   if (metric === "sessionRows") return point.sessionRows;
@@ -55,9 +61,13 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
   }
 
   const points = coordinates(history, metric);
+  const values = history.map((point) => metricValue(point, metric));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
   const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
   const fillPath = `${points[0]?.x ?? padding},${height - padding} ${polyline} ${points[points.length - 1]?.x ?? width - padding},${height - padding}`;
   const selected = history[selectedIndex] ?? history[history.length - 1];
+  const selectedMetricValue = metricValue(selected, metric);
 
   function handlePointKey(event: KeyboardEvent<SVGCircleElement>, index: number) {
     if (event.key === "Enter" || event.key === " ") {
@@ -68,6 +78,15 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
 
   return (
     <div className="rounded-lg border border-cyan/20 bg-black/35 p-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan">Active chart metric</p>
+          <p className="mt-1 text-sm text-slate-300">{metricDescriptions[metric]}</p>
+        </div>
+        <span className="rounded-full border border-cyan/45 bg-cyan/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white">
+          Showing {metricLabels[metric]}
+        </span>
+      </div>
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${metricLabels[metric]} chart for workflow tracker history`} className="h-auto w-full">
         <defs>
           <linearGradient id="trackerLine" x1="0" x2="1" y1="0" y2="0">
@@ -90,6 +109,12 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
           const y = padding + (line * (height - padding * 2)) / 3;
           return <line key={line} x1={padding} x2={width - padding} y1={y} y2={y} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 8" />;
         })}
+        <text x={padding - 10} y={padding + 4} textAnchor="end" fill="#a7b4c8" fontSize="12" fontWeight="600">
+          {formatChartValue(max, metric)}
+        </text>
+        <text x={padding - 10} y={height - padding + 4} textAnchor="end" fill="#a7b4c8" fontSize="12" fontWeight="600">
+          {formatChartValue(min, metric)}
+        </text>
         <polygon points={fillPath} fill="url(#trackerFill)" />
         <polyline points={polyline} fill="none" stroke="url(#trackerLine)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" filter="url(#trackerGlow)" />
         {points.map(({ point, x, y }, index) => {
@@ -122,9 +147,11 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
       <div className="mt-3 rounded-md border border-cyan/25 bg-cyan/5 p-3" aria-live="polite">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan">Tracker tooltip</p>
         <p className="mt-2 text-sm text-white">
-          {selected.date}: {formatMetricNumber(selected.workflowEvents)} events, {formatSignedMetric(selected.dailyDelta)} delta, {formatMetricNumber(selected.sessionRows)} sessions.
+          {selected.date}: {metricLabels[metric]} {formatChartValue(selectedMetricValue, metric)}.
         </p>
-        <p className="mt-1 text-xs leading-5 text-slate-400">Workflow events are extracted from local Codex JSONL session logs during the evidence refresh process.</p>
+        <p className="mt-1 text-xs leading-5 text-slate-400">
+          Snapshot context: {formatMetricNumber(selected.workflowEvents)} events, {formatSignedMetric(selected.dailyDelta)} delta, {formatMetricNumber(selected.sessionRows)} sessions.
+        </p>
       </div>
     </div>
   );

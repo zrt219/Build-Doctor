@@ -92,10 +92,18 @@ test("upgrades live workflow tracker interactions and evidence drawer", async ({
 
   await tracker.getByRole("button", { name: "Session rows" }).click();
   await expect(page.locator("svg[aria-label='Session rows chart for workflow tracker history']")).toBeVisible();
+  await expect(tracker.getByText("Codex session rows")).toBeVisible();
+  await expect(tracker.getByText("Session index rows aligned to local session logs in the dated evidence refresh.")).toBeVisible();
+  await expect(tracker.getByText("Showing Session rows")).toBeVisible();
+  await expect(tracker.getByText("2026-05-24: Session rows 757.")).toBeVisible();
   await expect(tracker.getByText(/757 sessions/i)).toBeVisible();
 
   await tracker.getByRole("button", { name: "Daily delta" }).click();
   await expect(page.locator("svg[aria-label='Daily delta chart for workflow tracker history']")).toBeVisible();
+  await expect(tracker.getByText("daily event delta")).toBeVisible();
+  await expect(tracker.getByText("Workflow-event growth compared with the previous tracker snapshot.")).toBeVisible();
+  await expect(tracker.getByText("Showing Daily delta")).toBeVisible();
+  await expect(tracker.getByText("2026-05-24: Daily delta +24,718.")).toBeVisible();
   await expect(tracker.getByText(/\+24,718 delta/i)).toBeVisible();
 
   await tracker.getByRole("button", { name: "How this works" }).click();

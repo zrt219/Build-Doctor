@@ -348,3 +348,12 @@
 - Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (19 tests), `git diff --check`, local production smoke check for `/projects/build-doctor`, and root/proof-page HTML checks confirming proof brief and evidence source links render.
 - Evidence/files: `src/app/projects/[slug]/page.tsx`, `src/data/projects.ts`, `src/data/evidenceSources.ts`, `src/components/portfolio/FeaturedProofGrid.tsx`, `src/components/portfolio/ProjectDirectory.tsx`, `src/components/portfolio/EvidenceLedger.tsx`, `src/components/portfolio/CommandPalette.tsx`, `src/components/portfolio/TopCommandNav.tsx`, `e2e/build-doctor.spec.ts`.
 - Resume-safe bullet: Added static signature proof briefs and evidence-linked portfolio navigation to a Next.js AI engineering mainframe, improving project inspection depth while preserving public-safe boundaries and verified E2E/build coverage.
+
+## 2026-05-25 - Verified Engineering Work
+
+- Built/changed: Fixed the Live Workflow Events Tracker metric controls so Workflow Events, Session Rows, and Daily Delta each update the primary metric panel, helper text, source chip, chart label, y-axis scale, and tooltip instead of only changing the selected button state.
+- Systems involved: Build Doctor portfolio mainframe, live workflow tracker UI, responsive SVG chart, Playwright tracker interaction coverage.
+- Technical skills demonstrated: interactive analytics UX, accessible stateful controls, evidence metric presentation, chart readability, browser regression testing.
+- Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (19 tests), and local production restart on port 3017.
+- Evidence/files: `src/components/portfolio/LiveWorkflowEventsTracker.tsx`, `src/components/portfolio/LiveWorkflowEventsChart.tsx`, `e2e/build-doctor.spec.ts`.
+- Resume-safe bullet: Improved an evidence telemetry dashboard by making metric mode controls update the visible chart, summary, source context, and browser-tested interaction state.
