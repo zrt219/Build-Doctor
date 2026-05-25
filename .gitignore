@@ -8,4 +8,14 @@ coverage/
 
 .vercel
 .omx/
+.codex/
+.linear/
+.linear-fallback/
+.qa/
+copy-memory/
 test-results/
+*_prompt*.md
+*_prompts.md
+FINAL_*.md
+DEPLOYMENT_NOTES.md
+LIVE_WORKFLOW_TRACKER_UPGRADE_REPORT.md

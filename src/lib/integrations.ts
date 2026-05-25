@@ -1,5 +1,3 @@
-export type SupabaseTable = "suite_events" | "demo_runs" | "eval_runs" | "exported_reports";
-
 type FetchLike = typeof fetch;
 
 export type IntegrationHealth = {
@@ -9,8 +7,7 @@ export type IntegrationHealth = {
   supabase: {
     configured: boolean;
     mode: "SUPABASE_REST" | "DETERMINISTIC_FALLBACK";
-    urlHost: string | null;
-    writableTables: SupabaseTable[];
+    storage: "CONFIGURED" | "LOCAL_FALLBACK";
     missingEnv: string[];
   };
   openRouter?: {
@@ -28,15 +25,6 @@ export type DemoEventInput = {
   payload?: Record<string, unknown>;
 };
 
-function safeHost(rawUrl: string | undefined) {
-  if (!rawUrl) return null;
-  try {
-    return new URL(rawUrl).host;
-  } catch {
-    return null;
-  }
-}
-
 export function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
@@ -51,7 +39,6 @@ export function getSupabaseConfig() {
     url,
     key,
     configured: Boolean(url && key),
-    urlHost: safeHost(url),
     missingEnv,
   };
 }
@@ -86,8 +73,7 @@ export function getIntegrationHealth(app: string, options: { includeOpenRouter?:
     supabase: {
       configured: supabase.configured,
       mode: supabase.configured ? "SUPABASE_REST" : "DETERMINISTIC_FALLBACK",
-      urlHost: supabase.urlHost,
-      writableTables: ["suite_events", "demo_runs", "eval_runs", "exported_reports"],
+      storage: supabase.configured ? "CONFIGURED" : "LOCAL_FALLBACK",
       missingEnv: supabase.missingEnv,
     },
     openRouter: openRouterHealth,

@@ -21,7 +21,11 @@ const classByKind = {
 export function StatusChip({ kind, label }: { kind: StatusKind; label: string }) {
   const Icon = iconByKind[kind];
   return (
-    <span className={`inline-flex items-center gap-2 border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white ${classByKind[kind]}`}>
+    <span
+      role="status"
+      aria-label={`${kind}: ${label}`}
+      className={`inline-flex max-w-full items-center gap-2 border px-3 py-1 text-left text-xs font-semibold uppercase tracking-[0.14em] text-white ${classByKind[kind]}`}
+    >
       <Icon aria-hidden="true" className="h-3.5 w-3.5" />
       {label}
     </span>

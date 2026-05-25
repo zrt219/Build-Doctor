@@ -1,236 +1,52 @@
-import Link from "next/link";
-import { ArrowRight, CheckCircle2, ExternalLink, GitBranch, RadioTower, ShieldCheck } from "lucide-react";
-import { runEvalSuite } from "@/lib/build-doctor";
-import { portfolioProjects, suiteApps, suiteDemoFlow, suiteWorkflowSteps } from "@/lib/suite-metadata";
-import { InfoTip } from "./InfoTip";
-import { SocialLinks } from "./SocialLinks";
-import { StatusChip } from "./StatusChip";
-
-const jobFamilies = [
-  ["OpenAI Codex Core Agent", "long-horizon coding, failure analysis, tool-use strategy"],
-  ["Vercel Agent / AI Gateway", "deploy debugging, AI SDK routing, production readiness"],
-  ["Grafana AI/Ops", "incident analysis, noisy signal reduction, observability-style reports"],
-  ["Anthropic Applied AI", "customer-facing workflows, evals, safety discipline"],
-  ["Cohere Agentic Workflows", "enterprise tool use, auditability, approval gates"],
-];
+import { ContactCTA } from "@/components/portfolio/ContactCTA";
+import { EmployerSignalPanel } from "@/components/portfolio/EmployerSignalPanel";
+import { EvidenceLedger } from "@/components/portfolio/EvidenceLedger";
+import { FeaturedProofGrid } from "@/components/portfolio/FeaturedProofGrid";
+import { Footer } from "@/components/portfolio/Footer";
+import { HeroMainframe } from "@/components/portfolio/HeroMainframe";
+import { LiveWorkflowEventsTracker } from "@/components/portfolio/LiveWorkflowEventsTracker";
+import { MotionSection } from "@/components/portfolio/MotionSection";
+import { ProjectDirectory } from "@/components/portfolio/ProjectDirectory";
+import { RalphplanWorkflowMap } from "@/components/portfolio/RalphplanWorkflowMap";
+import { RecruiterPath } from "@/components/portfolio/RecruiterPath";
+import { StatsRibbon } from "@/components/portfolio/StatsRibbon";
+import { TopCommandNav } from "@/components/portfolio/TopCommandNav";
 
 export function SuiteHub() {
-  const buildDoctorEvals = runEvalSuite();
-
   return (
-    <main className="relative mx-auto min-h-screen max-w-7xl px-5 py-6 lg:px-8">
-      <header className="mb-8 rounded-lg border border-line bg-black/35 p-4 backdrop-blur">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-md border border-cyan/60 bg-cyan/10">
-              <RadioTower className="h-5 w-5 text-cyan" aria-hidden="true" />
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Zhane&apos;s Portfolio Vercel</p>
-              <p className="font-semibold text-white">
-                Portfolio command center{" "}
-                <InfoTip label="What this is">A single home base that links Vercel projects, proof routes, GitHub sources, and the reviewer flow.</InfoTip>
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <StatusChip kind="simulated" label="Demo systems" />
-            <StatusChip kind="pass" label={`${portfolioProjects.length} Vercel links`} />
-            <StatusChip kind="locked" label="GitHub-first proof" />
-          </div>
-          <SocialLinks />
-        </div>
-      </header>
-
-      <section className="mb-8 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-        <div className="rounded-lg border border-line bg-panel/85 p-7 shadow-glow">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Employer-facing AI engineering system</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight text-white md:text-6xl">Zhane&apos;s Portfolio Vercel: one command center for AI apps, proof systems, and deploy diagnostics.</h1>
-          <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
-            Build Doctor now acts as the portfolio hub for the Vercel app surface: resume tailoring, evidence dashboards, gateway failover, agent workflow design, RAG/digital twin systems, visual systems, and supporting project links.
-          </p>
-          <div className="mt-5 rounded-md border border-dashed border-cyan/40 bg-cyan/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan">Plain English</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              This is the reviewer map: one place to click through Zhane&apos;s Vercel projects, inspect GitHub-backed work where available, and open the Build Doctor diagnostic demo.
-            </p>
-          </div>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/build-doctor" className="inline-flex items-center gap-2 rounded-md border border-cyan/70 bg-cyan/10 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:bg-cyan/20">
-              Start guided demo <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <a href="https://github.com/zrt219" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line bg-black/30 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-white hover:border-white/45">
-              GitHub proof <ExternalLink className="h-4 w-4" aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-        <div className="rounded-lg border border-line bg-black/35 p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Suite Readiness</p>
-          <div className="mt-4 grid gap-3">
-            <div className="rounded-md border border-line bg-panel/70 p-4">
-              <p className="text-sm text-slate-400">
-                Build Doctor local evals{" "}
-                <InfoTip label="Eval">A repeatable test set that checks whether the app gives the right answer for known examples.</InfoTip>
-              </p>
-              <p className="mt-2 text-4xl font-semibold text-white">{buildDoctorEvals.score}%</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">{buildDoctorEvals.passed}/{buildDoctorEvals.total} fixtures passing</p>
-            </div>
-            {["Separate Vercel projects", "Health endpoints", "Eval endpoints", "Cross-app navigation"].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-md border border-line bg-panel/70 p-3">
-                <CheckCircle2 className="h-4 w-4 text-cyan" aria-hidden="true" />
-                <span className="text-sm font-medium text-slate-100">
-                  {item}{" "}
-                  {item === "Health endpoints" ? <InfoTip label="Health endpoint">A simple URL that says whether the app is responding and what mode it is running in.</InfoTip> : null}
-                  {item === "Eval endpoints" ? <InfoTip label="Eval endpoint">A public URL that returns the app's test score as structured data.</InfoTip> : null}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">Vercel project directory</p>
-            <h2 className="mt-2 text-3xl font-semibold text-white">Portfolio links reviewers can open directly.</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              Deployment notes mirror the current Vercel list when provided. Projects without a supplied GitHub source are labeled as URL-only instead of overclaiming repo proof.
-            </p>
-          </div>
-          <StatusChip kind="locked" label="Public links only" />
-        </div>
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {portfolioProjects.map((project, index) => (
-            <article key={project.id} className="rounded-md border border-line bg-black/30 p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-mono text-xs text-cyan">{String(index + 1).padStart(2, "0")} / {project.category}</p>
-                  <h3 className="mt-2 text-lg font-semibold text-white">{project.name}</h3>
-                </div>
-                <span className="rounded-full border border-dashed border-gold/45 bg-gold/10 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-gold">
-                  {project.deploymentStatus}
-                </span>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{project.notes}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <a href={project.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-cyan/60 bg-cyan/10 px-3 py-2 text-sm font-semibold text-white hover:bg-cyan/20">
-                  Open app <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                </a>
-                {project.githubUrl ? (
-                  <a href={project.githubUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-3 py-2 text-sm text-slate-200 hover:border-white/45">
-                    GitHub <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  </a>
-                ) : null}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-8 grid gap-4 md:grid-cols-2">
-        {suiteApps.map((app, index) => (
-          <article key={app.id} className="rounded-lg border border-line bg-black/35 p-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="font-mono text-xs text-cyan">0{index + 1} / {app.demoMode}</p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">{app.name}</h2>
-              </div>
-              <StatusChip kind="pass" label={app.evalSummary} />
-            </div>
-            <p className="mt-3 text-sm leading-6 text-slate-300">{app.subtitle}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {app.proofSignals.map((signal) => (
-                <span key={signal} className="rounded-full border border-line bg-panel/70 px-3 py-1 text-xs uppercase tracking-[0.12em] text-slate-300">{signal}</span>
-              ))}
-            </div>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <a href={app.demoUrl} className="inline-flex items-center gap-2 rounded-md border border-cyan/60 bg-cyan/10 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan/20">
-                {app.primaryDemoAction} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </a>
-              <a href={app.statusEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
-                Health <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              </a>
-              <a href={app.evalEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
-                Eval <InfoTip label="Eval">Shows the demo's self-check score, like a small report card for its main behavior.</InfoTip> <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              </a>
-              <a href={app.integrationEndpoint} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 text-sm text-slate-200 hover:border-white/45">
-                Integration <InfoTip label="Integration">Shows whether outside services such as Supabase or OpenRouter are live, or if the app is safely using demo fallback mode.</InfoTip> <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              </a>
-            </div>
-          </article>
-        ))}
-      </section>
-
-      <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan">App-spanning workflow</p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">Paste build logs {"->"} diagnose root cause {"->"} show trace {"->"} suggest patch {"->"} export report.</h2>
-          </div>
-          <StatusChip kind="simulated" label="Deterministic demo" />
-        </div>
-        <div className="mt-5 grid gap-3 lg:grid-cols-5">
-          {suiteWorkflowSteps.map((step, index) => (
-            <a key={step.id} href={step.href} className="rounded-md border border-line bg-black/30 p-4 text-inherit no-underline hover:border-cyan/60">
-              <p className="font-mono text-xs text-cyan">STEP {index + 1} / {step.appName}</p>
-              <h3 className="mt-2 text-lg font-semibold text-white">{step.label}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{step.plainEnglish}</p>
-              <p className="mt-3 rounded-sm border border-dashed border-cyan/35 bg-cyan/5 px-2 py-1 text-xs uppercase tracking-[0.12em] text-slate-200">{step.output}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-8 rounded-lg border border-line bg-panel/85 p-6">
-        <h2 className="text-2xl font-semibold text-white">
-          Live Proof Checklist{" "}
-          <InfoTip label="Live proof">Public links reviewers can click to confirm the apps load and return safe structured status data.</InfoTip>
-        </h2>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-          These links are intentionally public and secret-safe. They show route health, deterministic eval status, and whether Supabase/OpenRouter integrations are live or running in fallback mode.
-        </p>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          {suiteApps.map((app) => (
-            <div key={app.id} className="rounded-md border border-line bg-black/30 p-4">
-              <p className="font-semibold text-white">{app.name}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">{app.demoMode}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <a href={app.statusEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">health</a>
-                <a href={app.evalEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">eval</a>
-                <a href={app.integrationEndpoint} target="_blank" rel="noreferrer" className="rounded-full border border-line px-3 py-1 text-xs text-slate-300">integration</a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-8 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-lg border border-line bg-panel/85 p-6">
-          <GitBranch className="h-5 w-5 text-gold" aria-hidden="true" />
-          <h2 className="mt-3 text-2xl font-semibold text-white">Guided Demo Flow</h2>
-          <div className="mt-4 space-y-3">
-            {suiteDemoFlow.map((step, index) => (
-              <div key={step} className="flex gap-3 rounded-md border border-line bg-black/30 p-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-cyan/50 font-mono text-xs text-cyan">{index + 1}</span>
-                <p className="text-sm leading-6 text-slate-300">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-lg border border-line bg-panel/85 p-6">
-          <ShieldCheck className="h-5 w-5 text-cyan" aria-hidden="true" />
-          <h2 className="mt-3 text-2xl font-semibold text-white">Job Alignment</h2>
-          <div className="mt-4 grid gap-3">
-            {jobFamilies.map(([role, evidence]) => (
-              <div key={role} className="rounded-md border border-line bg-black/30 p-4">
-                <p className="font-semibold text-white">{role}</p>
-                <p className="mt-1 text-sm leading-6 text-slate-400">{evidence}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
+    <>
+      <TopCommandNav />
+      <main className="relative mx-auto min-h-screen max-w-7xl px-4 pb-8 text-[16px] sm:px-5 lg:px-8">
+        <HeroMainframe />
+        <MotionSection className="mb-8">
+          <StatsRibbon />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <LiveWorkflowEventsTracker />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <FeaturedProofGrid />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <RecruiterPath />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <RalphplanWorkflowMap />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <ProjectDirectory />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <EmployerSignalPanel />
+        </MotionSection>
+        <MotionSection className="mb-8">
+          <EvidenceLedger />
+        </MotionSection>
+        <MotionSection>
+          <ContactCTA />
+        </MotionSection>
+      </main>
+      <Footer />
+    </>
   );
 }

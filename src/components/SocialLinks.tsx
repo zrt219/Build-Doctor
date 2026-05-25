@@ -10,7 +10,7 @@ export function SocialLinks() {
           href={link.href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-line bg-black/25 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-200 hover:border-cyan/70 hover:text-white"
+          className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line bg-black/25 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-200 transition hover:-translate-y-0.5 hover:border-cyan/70 hover:bg-cyan/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan active:translate-y-0"
         >
           {link.label}
           <ExternalLink className="h-3 w-3" aria-hidden="true" />

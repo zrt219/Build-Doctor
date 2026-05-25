@@ -54,7 +54,7 @@ export function SampleLogPicker({ activeId, onPick }: { activeId: string; onPick
               type="button"
               onClick={() => setActiveCategory(category)}
               aria-pressed={activeCategory === category}
-              className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
+              className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan active:translate-y-px active:scale-[0.99] ${
                 activeCategory === category
                   ? "border-cyan/70 bg-cyan/15 text-white shadow-[inset_0_2px_0_rgba(109,216,255,0.85)]"
                   : "border-white/10 bg-white/[0.04] text-slate-300 hover:border-white/30 hover:text-white"
@@ -76,7 +76,7 @@ export function SampleLogPicker({ activeId, onPick }: { activeId: string; onPick
                 type="button"
                 onClick={() => onPick(sample.id)}
                 aria-pressed={activeId === sample.id}
-                className={`rounded-xl border px-3 py-3 text-left transition ${
+                className={`rounded-xl border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan active:translate-y-px active:scale-[0.99] ${
                   activeId === sample.id
                     ? "border-cyan/70 bg-cyan/10 shadow-[inset_0_3px_0_rgba(109,216,255,0.85),0_14px_40px_rgba(109,216,255,0.08)]"
                     : "border-white/10 bg-white/[0.055] hover:border-white/30 hover:bg-white/[0.075]"

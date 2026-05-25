@@ -399,7 +399,7 @@ function runCrossSuiteAudit(recorder: AuditRecorder, count: number) {
         name: `metadata-${index}`,
         passed:
           suiteApp.productionUrl.startsWith("https://") &&
-          suiteApp.githubUrl === "https://github.com/zrt219" &&
+          suiteApp.githubUrl.startsWith("https://github.com/zrt219/") &&
           suiteApp.statusEndpoint.includes("/api/health") &&
           suiteApp.evalEndpoint.includes("/api/eval"),
         details: "Suite metadata did not include required production/GitHub/API links.",
@@ -426,7 +426,9 @@ function runCrossSuiteAudit(recorder: AuditRecorder, count: number) {
         category: "integration-health-shape",
         name: `integration-health-${index}`,
         passed:
-          health.every((item) => ["READY", "FALLBACK"].includes(item.status) && item.supabase.writableTables.length === 4) &&
+          health.every((item) => ["READY", "FALLBACK"].includes(item.status) && ["SUPABASE_REST", "DETERMINISTIC_FALLBACK"].includes(item.supabase.mode)) &&
+          !JSON.stringify(health).includes("writableTables") &&
+          !JSON.stringify(health).includes("urlHost") &&
           !containsAnyRawSecret(JSON.stringify(health)),
         details: "Integration-health output was malformed or secret-unsafe.",
         severity: "critical",

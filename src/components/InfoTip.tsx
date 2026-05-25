@@ -7,7 +7,7 @@ export function InfoTip({ label, children }: { label: string; children: string }
         tabIndex={0}
         role="note"
         aria-label={`${label}: ${children}`}
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-cyan/60 bg-cyan/10 text-cyan outline-none transition hover:bg-cyan/20 focus:border-white focus:bg-cyan/20"
+        className="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-cyan/60 bg-cyan/10 text-cyan outline-none transition hover:bg-cyan/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan active:scale-95"
       >
         <Info className="h-3.5 w-3.5" aria-hidden="true" />
       </span>

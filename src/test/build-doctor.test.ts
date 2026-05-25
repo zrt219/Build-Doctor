@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { POST as diagnosePost } from "@/app/api/diagnose/route";
 import { POST as enrichPost } from "@/app/api/enrich/route";
+import { GET as evalGet } from "@/app/api/eval/route";
+import { GET as healthGet } from "@/app/api/health/route";
+import { GET as integrationHealthGet } from "@/app/api/integration-health/route";
 import { POST as reportPost } from "@/app/api/report/route";
 import { diagnoseBuildLog, generateIncidentReport, runEvalSuite } from "@/lib/build-doctor";
 import { getAllCachedDeepSeekDemoReviews, getCachedDeepSeekDemoReview } from "@/lib/build-doctor/cached-demo-reviews";
@@ -472,26 +475,29 @@ describe("Vercel Build Doctor deterministic engine", () => {
     const previousProvider = process.env.LLM_PROVIDER;
     process.env.ENABLE_LLM_ENRICHMENT = "false";
     process.env.LLM_PROVIDER = "mock";
-    const badDiagnose = await diagnosePost(new Request("http://localhost/api/diagnose", { method: "POST", body: "{}" }));
+    const badDiagnose = await diagnosePost(new Request("http://localhost/api/diagnose", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }));
     expect(badDiagnose.status).toBe(400);
 
     const diagnosis = diagnoseBuildLog(sampleLogs[1].log);
     const goodDiagnose = await diagnosePost(new Request("http://localhost/api/diagnose", {
       method: "POST",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({ log: sampleLogs[1].log }),
     }));
     expect(goodDiagnose.status).toBe(200);
-    expect(await goodDiagnose.json()).toMatchObject({ mode: "deterministic" });
+    expect(await goodDiagnose.json()).toMatchObject({ ok: true, mode: "deterministic", data: { mode: "deterministic" } });
 
     const enrich = await enrichPost(new Request("http://localhost/api/enrich", {
       method: "POST",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({ diagnosis }),
     }));
     expect(enrich.status).toBe(200);
-    expect(await enrich.json()).toMatchObject({ aiPatchReview: null, providerStatus: "disabled" });
+    expect(await enrich.json()).toMatchObject({ ok: false, aiPatchReview: null, providerStatus: "disabled" });
 
     const report = await reportPost(new Request("http://localhost/api/report", {
       method: "POST",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({
         diagnosis,
         providerStatus: "free_model_rate_limited",
@@ -500,6 +506,7 @@ describe("Vercel Build Doctor deterministic engine", () => {
     }));
     expect(report.status).toBe(200);
     const reportPayload = await report.json();
+    expect(reportPayload).toMatchObject({ ok: true, data: { format: "markdown", rawLogStored: false } });
     expect(reportPayload.report).toContain("# Build Doctor Incident Report");
     expect(reportPayload.report).toContain("Optional DeepSeek review was not included because the free provider was rate-limited.");
     expect(reportPayload.report).toContain("Cached provider review example, not live output");
@@ -509,6 +516,58 @@ describe("Vercel Build Doctor deterministic engine", () => {
     else process.env.ENABLE_LLM_ENRICHMENT = previousEnabled;
     if (previousProvider === undefined) delete process.env.LLM_PROVIDER;
     else process.env.LLM_PROVIDER = previousProvider;
+  });
+
+  it("returns stable no-store JSON shapes for read APIs", async () => {
+    const health = await healthGet();
+    expect(health.headers.get("cache-control")).toBe("no-store");
+    expect(await health.json()).toMatchObject({
+      ok: true,
+      data: {
+        service: "vercel-build-doctor-agent",
+      },
+    });
+
+    const evals = await evalGet();
+    expect(evals.headers.get("cache-control")).toBe("no-store");
+    expect(await evals.json()).toMatchObject({
+      ok: true,
+      data: {
+        failed: 0,
+      },
+      failed: 0,
+    });
+
+    const integration = await integrationHealthGet();
+    const integrationPayload = await integration.json();
+    expect(integration.headers.get("cache-control")).toBe("no-store");
+    expect(integrationPayload.ok).toBe(true);
+    expect(JSON.stringify(integrationPayload)).not.toContain("urlHost");
+    expect(JSON.stringify(integrationPayload)).not.toContain("writableTables");
+  });
+
+  it("rejects unsupported API content types and unrecognized report provider statuses", async () => {
+    const textResponse = await diagnosePost(new Request("http://localhost/api/diagnose", {
+      method: "POST",
+      headers: { "content-type": "text/plain" },
+      body: "not json",
+    }));
+
+    expect(textResponse.status).toBe(415);
+    expect(await textResponse.json()).toMatchObject({ ok: false, error: { code: "UNSUPPORTED_MEDIA_TYPE" } });
+
+    const diagnosis = diagnoseBuildLog(sampleLogs[1].log);
+    const badReport = await reportPost(new Request("http://localhost/api/report", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        diagnosis,
+        providerStatus: "raw-unvalidated-provider",
+      }),
+    }));
+
+    expect(badReport.status).toBe(400);
+    expect(await badReport.json()).toMatchObject({ ok: false, error: { code: "INVALID_DIAGNOSIS" } });
   });
 
   it("reports deterministic integration fallback without Supabase env vars", () => {
@@ -521,6 +580,8 @@ describe("Vercel Build Doctor deterministic engine", () => {
     const health = getIntegrationHealth("test-app");
 
     expect(health.supabase.mode).toBe("DETERMINISTIC_FALLBACK");
+    expect(JSON.stringify(health)).not.toContain("urlHost");
+    expect(JSON.stringify(health)).not.toContain("writableTables");
     expect(health.supabase.missingEnv.length).toBeGreaterThan(0);
     if (previousUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
     if (previousKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousKey;
@@ -541,5 +602,18 @@ describe("Vercel Build Doctor deterministic engine", () => {
     if (previousUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
     if (previousKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousKey;
     if (previousService) process.env.SUPABASE_SERVICE_ROLE_KEY = previousService;
+  });
+
+  it("rejects oversized public demo build logs", async () => {
+    const oversizedLog = "x".repeat(120_001);
+    const response = await diagnosePost(new Request("http://localhost/api/diagnose", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ log: oversizedLog }),
+    }));
+
+    expect(response.status).toBe(400);
+    const payload = await response.json();
+    expect(payload.error.message).toContain("Redact secrets");
   });
 });

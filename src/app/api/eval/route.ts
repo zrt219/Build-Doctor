@@ -1,11 +1,13 @@
-import { NextResponse } from "next/server";
+import { jsonResponse } from "../_utils";
 import { runEvalSuite } from "@/lib/build-doctor";
 import { evalResultsSchema } from "@/lib/schemas";
 
 export async function GET() {
-  return NextResponse.json(evalResultsSchema.parse(runEvalSuite()));
+  const evals = evalResultsSchema.parse(runEvalSuite());
+  return jsonResponse({ ok: true, data: evals, ...evals });
 }
 
 export async function POST() {
-  return NextResponse.json(evalResultsSchema.parse(runEvalSuite()));
+  const evals = evalResultsSchema.parse(runEvalSuite());
+  return jsonResponse({ ok: true, data: evals, ...evals });
 }

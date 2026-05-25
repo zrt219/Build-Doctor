@@ -1,14 +1,4 @@
-export type SupabaseTable = "suite_events" | "demo_runs" | "eval_runs" | "exported_reports";
 type FetchLike = typeof fetch;
-
-function safeHost(url: string | undefined) {
-  if (!url) return null;
-  try {
-    return new URL(url).host;
-  } catch {
-    return null;
-  }
-}
 
 export function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
@@ -16,7 +6,7 @@ export function getSupabaseConfig() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const key = serviceKey ?? anonKey;
   const missingEnv = [url ? "" : "NEXT_PUBLIC_SUPABASE_URL", key ? "" : "NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY"].filter(Boolean);
-  return { url, key, configured: Boolean(url && key), urlHost: safeHost(url), missingEnv };
+  return { url, key, configured: Boolean(url && key), missingEnv };
 }
 
 export function getOpenRouterConfig() {
@@ -35,8 +25,7 @@ export function getIntegrationHealth(app: string) {
     supabase: {
       configured: supabase.configured,
       mode: supabase.configured ? "SUPABASE_REST" : "DETERMINISTIC_FALLBACK",
-      urlHost: supabase.urlHost,
-      writableTables: ["suite_events", "demo_runs", "eval_runs", "exported_reports"] satisfies SupabaseTable[],
+      storage: supabase.configured ? "CONFIGURED" : "LOCAL_FALLBACK",
       missingEnv: supabase.missingEnv,
     },
     openRouter: {

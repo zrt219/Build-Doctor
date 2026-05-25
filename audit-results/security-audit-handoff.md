@@ -43,7 +43,7 @@ This handoff covers deterministic local audit checks for the ZRT Vercel AI Syste
 - No service-role key value exposure in integration-health style responses.
 - Deterministic fallback behavior when provider or Supabase environment variables are missing.
 - OpenRouter key is used server-side only in the gateway adapter and is never returned in route output.
-- Supabase integration-health output reports only configured/missing state and safe URL host metadata.
+- Supabase integration-health output reports only configured/missing state and coarse storage mode metadata.
 - Bad payload rejection through Zod schema boundaries for gateway and resume-auditor inputs.
 - Generated reports avoid raw secret values and preserve explicit DEMO/MOCK/LOCAL ONLY positioning.
 

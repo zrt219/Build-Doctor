@@ -185,14 +185,34 @@ export type AutofillFixPlan = z.infer<typeof autofillFixPlanSchema>;
 export type AiPatchReview = z.infer<typeof aiPatchReviewSchema>;
 export type CachedProviderReview = z.infer<typeof cachedProviderReviewSchema>;
 
+export const maxBuildLogInputChars = 120_000;
+
 export const diagnoseRequestSchema = z.object({
-  log: z.string().min(1),
+  log: z
+    .string()
+    .min(1)
+    .max(maxBuildLogInputChars, "Build log is too large for the public demo. Redact secrets and trim to the failing section before retrying."),
   sampleId: z.string().optional(),
 });
 
 export const reportRequestSchema = z.object({
   diagnosis: diagnosisSchema,
-  providerStatus: z.string().optional(),
+  providerStatus: z
+    .enum([
+      "disabled",
+      "mock",
+      "openrouter_success",
+      "openrouter_missing_key",
+      "unsafe_paid_model_blocked",
+      "unsupported_model",
+      "free_model_rate_limited",
+      "free_model_unavailable",
+      "llm_json_parse_failed",
+      "llm_schema_validation_failed",
+      "llm_timeout",
+      "llm_error",
+    ])
+    .optional(),
   cachedProviderReview: cachedProviderReviewSchema.optional(),
   selectedSolutionSuggestions: z.array(solutionSuggestionSchema).optional(),
   autofillFixPlan: autofillFixPlanSchema.optional(),

@@ -1,4 +1,260 @@
+import { mkdirSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+
+const portfolioQaDir = ".qa/portfolio-mainframe";
+
+test.beforeAll(() => {
+  mkdirSync(portfolioQaDir, { recursive: true });
+});
+
+test("presents the AI engineering portfolio mainframe", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") {
+      consoleErrors.push(message.text());
+    }
+  });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1, name: /AI engineering systems built like a proof layer/i })).toBeVisible();
+  await expect(page.getByText("Visual style follows the supplied reference, but evidence does not.")).toBeVisible();
+  await expect(page.getByRole("link", { name: /View GitHub/i }).first()).toHaveAttribute("href", "https://github.com/zrt219");
+  await expect(page.getByRole("link", { name: /Email Zhane/i }).first()).toHaveAttribute("href", "mailto:zpeace11@gmail.com");
+  await expect(page.getByRole("link", { name: /View Workflow Snapshot/i })).toHaveAttribute("href", "#workflow-tracker");
+  const workflowTracker = page.locator("#workflow-tracker");
+  await expect(workflowTracker.getByRole("heading", { name: /Evidence-maintained telemetry from Codex session logs/i })).toBeVisible();
+  await expect(workflowTracker.getByText("1,160,551").first()).toBeVisible();
+  await expect(page.locator("svg[aria-label='Workflow events chart for workflow tracker history']")).toBeVisible();
+  await expect(page.getByText("Not image-derived")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Searchable proof-backed project map." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What the work proves." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "How Codex work becomes proof instead of loose claims." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Public-safe proof sources and live check routes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "A fast route through the strongest technical evidence." })).toBeVisible();
+  expect(consoleErrors).toEqual([]);
+});
+
+test("keeps sticky nav, hash links, and command palette interactive", async ({ page }) => {
+  await page.goto("/");
+
+  const stickyHeader = page.locator("header", { has: page.getByLabel("Open command palette") });
+  await expect(stickyHeader).toBeVisible();
+  await expect(stickyHeader).toHaveCSS("position", "sticky");
+
+  const hashes = await page.locator("a[href^='#']").evaluateAll((links) =>
+    links.map((link) => link.getAttribute("href")).filter(Boolean),
+  );
+  for (const hash of hashes) {
+    await expect(page.locator(hash!)).toHaveCount(1);
+  }
+
+  const nav = page.getByRole("navigation", { name: "Portfolio sections" });
+  await expect(nav.getByRole("link", { name: "Proof" })).toHaveAttribute("href", "#metrics");
+  await nav.getByRole("link", { name: "Workflow" }).click();
+  await expect(page.locator("#workflow-tracker")).toBeInViewport();
+
+  await page.keyboard.press("ControlOrMeta+K");
+  const dialog = page.getByRole("dialog", { name: "Portfolio command palette" });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByLabel("Search commands")).toBeFocused();
+  await page.getByLabel("Search commands").fill("build");
+  await expect(dialog.getByRole("link", { name: /Try Build Doctor/i })).toHaveAttribute("href", "/build-doctor");
+  await page.getByLabel("Search commands").fill("ledger");
+  await expect(dialog.getByRole("link", { name: /Open Evidence Ledger/i })).toHaveAttribute("href", "#evidence-ledger");
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await page.keyboard.press("ControlOrMeta+K");
+  await expect(page.getByLabel("Search commands")).toHaveValue("");
+  await page.keyboard.press("Escape");
+});
+
+test("copies contact email with visible feedback", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+
+  await expect(page.getByText("zpeace11@gmail.com").first()).toBeVisible();
+  const copyButton = page.getByRole("button", { name: /Copy Zhane email address/i });
+  await copyButton.click();
+  await expect(copyButton).toContainText("Copied");
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe("zpeace11@gmail.com");
+});
+
+test("upgrades live workflow tracker interactions and evidence drawer", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+
+  const tracker = page.locator("#workflow-tracker");
+  await expect(tracker.getByText("Static evidence snapshot")).toBeVisible();
+  await expect(tracker.getByText("This is not a real-time stream")).toBeVisible();
+  await expect(tracker.getByText("Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.")).toBeVisible();
+
+  await tracker.getByRole("button", { name: "Session rows" }).click();
+  await expect(page.locator("svg[aria-label='Session rows chart for workflow tracker history']")).toBeVisible();
+  await expect(tracker.getByText(/757 sessions/i)).toBeVisible();
+
+  await tracker.getByRole("button", { name: "Daily delta" }).click();
+  await expect(page.locator("svg[aria-label='Daily delta chart for workflow tracker history']")).toBeVisible();
+  await expect(tracker.getByText(/\+24,718 delta/i)).toBeVisible();
+
+  await tracker.getByRole("button", { name: "How this works" }).click();
+  const drawer = page.getByRole("dialog", { name: "Public-safe tracker sources" });
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByText("Private filesystem paths and raw session logs are intentionally hidden.")).toBeVisible();
+  await expect(drawer.getByText("Public-safe tracker summary")).toBeVisible();
+  await drawer.getByRole("button", { name: "Close tracker evidence drawer" }).click();
+  await expect(drawer).toHaveCount(0);
+
+  await tracker.getByRole("button", { name: "Copy Live Workflow Events Tracker metric summary" }).click();
+  await expect(tracker.getByRole("button", { name: "Copy Live Workflow Events Tracker metric summary" })).toContainText("Copied");
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain("1,160,551 workflow events");
+});
+
+test("keeps the portfolio directory free of noisy deployment status badges", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { name: "Searchable proof-backed project map." })).toBeVisible();
+  await expect(page.getByText("Production link provided")).toHaveCount(0);
+  await expect(page.getByText("URL provided")).toHaveCount(0);
+  await expect(page.getByText("Git connection needs review")).toHaveCount(0);
+  await expect(page.getByText("Vercel list reported no production deployment")).toHaveCount(0);
+});
+
+test("keeps public portfolio wording natural and non-meta", async ({ page }) => {
+  await page.goto("/");
+
+  const visibleText = await page.locator("body").innerText();
+  expect(visibleText).not.toMatch(/employer-facing portfolio/i);
+  expect(visibleText).not.toMatch(/recruiter-ready/i);
+  expect(visibleText).not.toMatch(/recruiter 90-second path/i);
+  expect(visibleText).not.toMatch(/what an employer can verify/i);
+  expect(visibleText).not.toMatch(/hiring signals/i);
+  expect(visibleText).not.toMatch(/built for recruiters/i);
+  expect(visibleText).not.toMatch(/recruiter-facing/i);
+  expect(visibleText).not.toMatch(/reviewer-facing/i);
+});
+
+test("presents the Evidence Dashboard as the signature portfolio project", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1, name: /AI engineering systems built like a proof layer/i })).toBeVisible();
+  const featuredSection = page.locator("section", { hasText: "Featured proof systems" });
+  await expect(featuredSection.getByRole("link", { name: /Open demo/i }).first()).toHaveAttribute("href", "https://zhane-grey-evidence-dashboard.vercel.app");
+  await expect(featuredSection.getByRole("link", { name: /GitHub/i }).first()).toHaveAttribute("href", "https://github.com/zrt219/AI-Engineering-Evidence-Engine");
+  await expect(page.getByRole("link", { name: /Try Build Doctor/i })).toHaveAttribute("href", "/build-doctor");
+
+  const projectCards = featuredSection.locator("article");
+  await expect(projectCards.first()).toContainText("Zhane Grey Evidence Dashboard");
+  await expect(projectCards.first()).toContainText("Signature proof surface");
+});
+
+test("keeps root page links concrete and mobile-readable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1, name: /AI engineering systems built like a proof layer/i })).toBeVisible();
+  const hasHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  expect(hasHorizontalOverflow).toBe(false);
+
+  const links = await page.getByRole("link").evaluateAll((anchors) =>
+    anchors.map((anchor) => ({
+      text: anchor.textContent?.replace(/\s+/g, " ").trim() ?? "",
+      href: anchor.getAttribute("href"),
+    })),
+  );
+
+  expect(links.length).toBeGreaterThan(30);
+  for (const link of links) {
+    expect(link.href, `Missing href for ${link.text}`).toBeTruthy();
+    expect(link.href, `Weak href for ${link.text}`).not.toBe("#");
+  }
+
+  await expect(page.getByLabel("Mobile portfolio sections")).toBeVisible();
+  await expect(page.getByRole("link", { name: /View GitHub/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Try Build Doctor/i })).toBeVisible();
+});
+
+test("filters project directory and preserves proof-status semantics", async ({ page }) => {
+  await page.goto("/");
+  const projectSection = page.locator("#projects");
+
+  await page.getByRole("button", { name: "Web3 / Solidity / Foundry" }).click();
+  await expect(page.getByRole("button", { name: "Web3 / Solidity / Foundry" })).toHaveAttribute("aria-pressed", "true");
+  await expect(projectSection.getByText(/projects shown/i)).toBeVisible();
+  await expect(projectSection.getByRole("heading", { name: "DatumX" })).toBeVisible();
+  await expect(projectSection.getByRole("heading", { name: "Vercel Build Doctor Agent" })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Public demo" }).click();
+  await expect(projectSection.getByRole("heading", { name: "Ethex Dynamic House Edge Console" })).toHaveCount(0);
+  await expect(projectSection.getByRole("heading", { name: "Unknown002" })).toHaveCount(0);
+  await expect(projectSection.getByRole("heading", { name: "AI Agents for Beginners" })).toHaveCount(0);
+
+  await page.getByLabel("Search projects").fill("gateway");
+  await page.getByRole("button", { name: "All" }).click();
+  await expect(projectSection.getByRole("heading", { name: "AI Gateway Failover Playground" })).toBeVisible();
+  await expect(projectSection.getByRole("heading", { name: "DatumX" })).toHaveCount(0);
+  await expect(projectSection.getByText("Search: gateway")).toBeVisible();
+  await page.getByRole("button", { name: "Clear project search" }).click();
+  await expect(page.getByLabel("Search projects")).toHaveValue("");
+  await page.getByLabel("Search projects").fill("local evidence");
+  await expect(projectSection.getByRole("heading", { name: "UO2X / Nuclear Frontier" })).toBeVisible();
+  await page.getByRole("button", { name: "Reset filters" }).click();
+  await expect(page.getByRole("button", { name: "All" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Search projects")).toHaveValue("");
+
+  const chart = page.locator("svg[aria-label='Workflow events chart for workflow tracker history']");
+  const chartBox = await chart.boundingBox();
+  expect(chartBox?.width).toBeGreaterThan(300);
+  expect(chartBox?.height).toBeGreaterThan(120);
+
+  await expect(page.getByText("Last refreshed 2026-05-24")).toBeVisible();
+  await expect(page.getByText("Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.")).toBeVisible();
+});
+
+test("keeps outbound links and email CTA public-safe", async ({ page }) => {
+  await page.goto("/");
+
+  const outboundIssues = await page.locator("a[href^='http']").evaluateAll((anchors) =>
+    anchors
+      .map((anchor) => ({
+        text: anchor.textContent?.replace(/\s+/g, " ").trim() ?? "",
+        href: anchor.getAttribute("href"),
+        target: anchor.getAttribute("target"),
+        rel: anchor.getAttribute("rel") ?? "",
+      }))
+      .filter((anchor) => !anchor.href?.startsWith("https://") || anchor.target !== "_blank" || !anchor.rel.includes("noreferrer")),
+  );
+  expect(outboundIssues).toEqual([]);
+
+  await expect(page.getByRole("link", { name: /Email Zhane/i }).first()).toHaveAttribute("href", "mailto:zpeace11@gmail.com");
+  await expect(page.getByText("zpeace11@gmail.com").first()).toBeVisible();
+  await expect(page.getByText(/\d{3}[-.) ]?\d{3}[-. ]?\d{4}/)).toHaveCount(0);
+  await expect(page.getByText(/C:\\Users\\|AFTER DIARY QUEEN|Documents\\/i)).toHaveCount(0);
+});
+
+test("captures portfolio mainframe screenshots across desktop tablet and mobile", async ({ page }) => {
+  const viewports = [
+    { name: "desktop", width: 1440, height: 1000 },
+    { name: "tablet", width: 834, height: 1112 },
+    { name: "mobile", width: 390, height: 844 },
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1, name: /AI engineering systems built like a proof layer/i })).toBeVisible();
+    const hasHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+    expect(hasHorizontalOverflow).toBe(false);
+    await page.screenshot({ path: `${portfolioQaDir}/${viewport.name}-home.png`, fullPage: true });
+  }
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByLabel("Open command palette").click();
+  await page.getByLabel("Search commands").fill("ledger");
+  await page.screenshot({ path: `${portfolioQaDir}/desktop-command-palette-ledger.png`, fullPage: false });
+});
 
 test("runs the five-step Build Doctor workflow", async ({ page }) => {
   await page.route("**/api/enrich", async (route) => {
