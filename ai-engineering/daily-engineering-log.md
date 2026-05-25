@@ -375,3 +375,12 @@
 - Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (21 tests), local production restart on port 3017, and headless Chromium drag sampling confirming intermediate scrubber rail positions with zero console errors.
 - Evidence/files: `src/components/portfolio/LiveWorkflowEventsChart.tsx`, `e2e/build-doctor.spec.ts`.
 - Resume-safe bullet: Improved an evidence telemetry chart with a smooth inspect-only scrubber, preserving source-bound metric selection while adding browser-verified drag and keyboard regression coverage.
+
+## 2026-05-25 - Verified Engineering Work
+
+- Built/changed: Added a faint public-domain Böcklin artwork accent to the shared portfolio footer, including optimized self-hosted artwork, visible attribution, accessible metadata, and footer link regression coverage.
+- Systems involved: Build Doctor portfolio mainframe, shared Footer component, public static assets, Playwright E2E suite, local production server on port 3017.
+- Technical skills demonstrated: public-safe visual asset integration, subtle footer atmosphere design, artwork attribution handling, accessibility metadata, responsive visual QA.
+- Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (21 tests), `git diff --check`, local production restart on port 3017, and desktop/mobile footer screenshots with no overflow or console errors.
+- Evidence/files: `src/components/portfolio/Footer.tsx`, `public/artwork/isle-of-the-dead-footer.jpg`, `e2e/build-doctor.spec.ts`, `.qa/footer-artwork/desktop-footer.png`, `.qa/footer-artwork/mobile-footer.png`.
+- Resume-safe bullet: Integrated a public-domain artwork accent into a production Next.js portfolio footer with accessible attribution, optimized self-hosted assets, responsive QA screenshots, and E2E link/privacy regression coverage.

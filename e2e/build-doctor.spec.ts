@@ -360,6 +360,17 @@ test("keeps outbound links and email CTA public-safe", async ({ page }) => {
 
   await expect(page.getByRole("link", { name: /Email Zhane/i }).first()).toHaveAttribute("href", "mailto:zpeace11@gmail.com");
   await expect(page.getByText("zpeace11@gmail.com").first()).toBeVisible();
+  await expect(page.getByText("© 2026 Zhane Grey. Public AI engineering portfolio.")).toBeVisible();
+  await expect(page.getByText("Â©")).toHaveCount(0);
+  const artworkCredit = page.getByRole("link", { name: /Artwork credit: Arnold Böcklin/i });
+  await expect(artworkCredit).toContainText("Artwork: Böcklin, The Isle of the Dead, 1883 · Public domain");
+  await expect(artworkCredit).toHaveAttribute(
+    "href",
+    "https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_III_(Alte_Nationalgalerie,_Berlin).jpg",
+  );
+  await expect(artworkCredit).toHaveAttribute("target", "_blank");
+  await expect(artworkCredit).toHaveAttribute("rel", "noreferrer");
+  await expect(artworkCredit).toHaveAttribute("title", /Alte Nationalgalerie, Berlin/);
   await expect(page.getByText(/\d{3}[-.) ]?\d{3}[-. ]?\d{4}/)).toHaveCount(0);
   await expect(page.getByText(/C:\\Users\\|AFTER DIARY QUEEN|Documents\\/i)).toHaveCount(0);
 });
