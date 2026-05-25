@@ -384,3 +384,12 @@
 - Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (21 tests), `git diff --check`, local production restart on port 3017, and desktop/mobile footer screenshots with no overflow or console errors.
 - Evidence/files: `src/components/portfolio/Footer.tsx`, `public/artwork/isle-of-the-dead-footer.jpg`, `e2e/build-doctor.spec.ts`, `.qa/footer-artwork/desktop-footer.png`, `.qa/footer-artwork/mobile-footer.png`.
 - Resume-safe bullet: Integrated a public-domain artwork accent into a production Next.js portfolio footer with accessible attribution, optimized self-hosted assets, responsive QA screenshots, and E2E link/privacy regression coverage.
+
+## 2026-05-25 - Verified Engineering Work
+
+- Built/changed: Corrected the Live Workflow Events Tracker drag affordance so the selected rail and highlighted handle stay aligned to the active evidence node while a separate faint preview rail follows pointer movement between nodes.
+- Systems involved: Build Doctor portfolio mainframe, live workflow tracker SVG chart, Playwright E2E suite, local production server on port 3017.
+- Technical skills demonstrated: SVG interaction alignment, pointer-state UX, evidence-bound chart controls, automated browser geometry verification, E2E regression testing.
+- Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (21 tests), local production restart on port 3017, and Chromium geometry sampling confirming handle/rail node alignment during and after drag with zero console errors.
+- Evidence/files: `src/components/portfolio/LiveWorkflowEventsChart.tsx`, `e2e/build-doctor.spec.ts`.
+- Resume-safe bullet: Refined an interactive evidence telemetry chart so drag preview movement remains smooth while the active handle and rail stay aligned to verified data nodes, backed by browser geometry checks and E2E regression coverage.

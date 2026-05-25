@@ -88,7 +88,7 @@ test("upgrades live workflow tracker interactions and evidence drawer", async ({
   const tracker = page.locator("#workflow-tracker");
   await expect(tracker.getByText("Static evidence snapshot")).toBeVisible();
   await expect(tracker.getByText("Manual refresh reads the public-safe snapshot endpoint. It does not expose raw logs or private paths.")).toBeVisible();
-  await expect(tracker.getByText("Drag the smooth scrubber rail to inspect evidence points. Arrow keys move the selected date.")).toBeVisible();
+  await expect(tracker.getByText("Drag the highlighted evidence node or chart rail to inspect points. Arrow keys move the selected date.")).toBeVisible();
   await expect(tracker.getByText("This is not a real-time stream")).toBeVisible();
   await expect(tracker.getByText("Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.")).toBeVisible();
 
@@ -132,14 +132,18 @@ test("supports draggable tracker scrubber and public snapshot refresh", async ({
   const chartBox = await chart.boundingBox();
   expect(chartBox).toBeTruthy();
   const scrubberRail = chart.getByTestId("workflow-scrubber-rail");
+  const scrubberHandle = chart.getByTestId("workflow-scrubber-handle");
   await page.mouse.move(chartBox!.x + chartBox!.width - 24, chartBox!.y + chartBox!.height / 2);
   await page.mouse.down();
   await expect(tracker.getByTestId("workflow-scrub-state")).toContainText("Scrubbing timeline");
   await page.mouse.move(chartBox!.x + chartBox!.width * 0.55, chartBox!.y + chartBox!.height / 2);
-  const midDragRailX = Number(await scrubberRail.getAttribute("x1"));
-  expect(midDragRailX).toBeGreaterThan(100);
-  expect(midDragRailX).toBeLessThan(620);
-  await expect(tracker.getByText("Scrubber handle follows your pointer; the selected value snaps to the nearest dated evidence point.")).toBeVisible();
+  const midPreviewRailX = Number(await chart.getByTestId("workflow-scrub-preview-rail").getAttribute("x1"));
+  const selectedRailX = Number(await scrubberRail.getAttribute("x1"));
+  const selectedHandleX = Number(await scrubberHandle.getAttribute("cx"));
+  expect(midPreviewRailX).toBeGreaterThan(100);
+  expect(midPreviewRailX).toBeLessThan(620);
+  expect(selectedHandleX).toBe(selectedRailX);
+  await expect(tracker.getByText("The highlighted handle stays on the nearest dated evidence node; the faint preview rail follows your pointer.")).toBeVisible();
   await page.mouse.move(chartBox!.x + 24, chartBox!.y + chartBox!.height / 2, { steps: 4 });
   await page.mouse.up();
   await expect(tracker.getByTestId("workflow-scrub-state")).toContainText("Showing Workflow events");

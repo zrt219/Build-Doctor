@@ -74,6 +74,7 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
   const selectedPoint = points[selectedIndex] ?? points[points.length - 1];
   const selectedMetricValue = metricValue(selected, metric);
   const activeScrubberX = dragging && scrubberX !== null ? scrubberX : selectedPoint.x;
+  const showPreviewRail = dragging && Math.abs(activeScrubberX - selectedPoint.x) > 4;
 
   function getScrubberX(clientX: number) {
     const bounds = svgRef.current?.getBoundingClientRect();
@@ -152,7 +153,7 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan">Active chart metric</p>
           <p className="mt-1 text-sm text-slate-300">{metricDescriptions[metric]}</p>
-          <p className="mt-1 text-xs leading-5 text-slate-400">Drag the smooth scrubber rail to inspect evidence points. Arrow keys move the selected date.</p>
+          <p className="mt-1 text-xs leading-5 text-slate-400">Drag the highlighted evidence node or chart rail to inspect points. Arrow keys move the selected date.</p>
         </div>
         <span
           data-testid="workflow-scrub-state"
@@ -209,10 +210,23 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
         <polygon points={fillPath} fill="url(#trackerFill)" />
         <polyline points={polyline} fill="none" stroke="url(#trackerLine)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" filter="url(#trackerGlow)" />
         <rect x={padding} y={padding - 20} width={width - padding * 2} height={height - padding * 2 + 40} rx="16" fill="transparent" pointerEvents="all" />
+        {showPreviewRail ? (
+          <line
+            data-testid="workflow-scrub-preview-rail"
+            x1={activeScrubberX}
+            x2={activeScrubberX}
+            y1={padding - 8}
+            y2={height - padding + 8}
+            stroke="#67e8f9"
+            strokeOpacity="0.28"
+            strokeWidth="2"
+            strokeDasharray="2 7"
+          />
+        ) : null}
         <line
           data-testid="workflow-scrubber-rail"
-          x1={activeScrubberX}
-          x2={activeScrubberX}
+          x1={selectedPoint.x}
+          x2={selectedPoint.x}
           y1={padding - 14}
           y2={height - padding + 12}
           stroke="#f8fafc"
@@ -221,23 +235,24 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
           strokeDasharray="5 6"
           className={dragging ? "" : "transition-all duration-200 ease-out"}
         />
-        <circle
-          data-testid="workflow-scrubber-handle"
-          cx={activeScrubberX}
-          cy={padding - 24}
-          r={dragging ? "14" : "11"}
-          fill="#07111f"
-          stroke="#67e8f9"
-          strokeWidth="3"
-          className={dragging ? "" : "transition-all duration-200 ease-out"}
-        />
-        <text x={activeScrubberX} y={padding - 20} textAnchor="middle" fill="#f8fafc" fontSize="9" fontWeight="800">
-          {dragging ? "MOVE" : "DRAG"}
-        </text>
         {points.map(({ point, x, y }, index) => {
           const active = index === selectedIndex;
           return (
             <g key={point.date}>
+              {active ? (
+                <circle
+                  data-testid="workflow-scrubber-handle"
+                  cx={x}
+                  cy={y}
+                  r={dragging ? 18 : 15}
+                  fill="none"
+                  stroke="#f8fafc"
+                  strokeOpacity={dragging ? "0.82" : "0.58"}
+                  strokeWidth="2"
+                  strokeDasharray={dragging ? "none" : "4 5"}
+                  className={dragging ? "" : "transition-all duration-200 ease-out"}
+                />
+              ) : null}
               <circle
                 cx={x}
                 cy={y}
@@ -273,7 +288,7 @@ export function LiveWorkflowEventsChart({ history, metric, selectedIndex, onSele
           Snapshot context: {formatMetricNumber(selected.workflowEvents)} events, {formatSignedMetric(selected.dailyDelta)} delta, {formatMetricNumber(selected.sessionRows)} sessions.
         </p>
         <p className="mt-1 text-xs leading-5 text-slate-400">
-          {dragging ? "Scrubber handle follows your pointer; the selected value snaps to the nearest dated evidence point." : "Drag position is inspect-only; tracker points are not editable."}
+          {dragging ? "The highlighted handle stays on the nearest dated evidence node; the faint preview rail follows your pointer." : "Drag position is inspect-only; tracker points are not editable."}
         </p>
       </div>
     </div>
