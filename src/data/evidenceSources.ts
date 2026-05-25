@@ -6,8 +6,11 @@ export type EvidenceSource = {
   status: "verified" | "documented" | "demo" | "review";
   detail: string;
   sourceFile?: string;
+  sourceHref?: string;
   href?: string;
 };
+
+const githubBlobBase = "https://github.com/zrt219/Zhanes-Portfolio-Vercel-/blob/master";
 
 export const evidenceSources: EvidenceSource[] = [
   {
@@ -17,6 +20,7 @@ export const evidenceSources: EvidenceSource[] = [
     publicLabel: "Workflow Events Tracker",
     status: "verified",
     sourceFile: "evidence/public/live-workflow-events-tracker.md",
+    sourceHref: `${githubBlobBase}/evidence/public/live-workflow-events-tracker.md`,
     detail: "Stores the May 23 to May 24 workflow-event history and current Codex session counts.",
   },
   {
@@ -26,6 +30,7 @@ export const evidenceSources: EvidenceSource[] = [
     publicLabel: "Daily Evidence Report",
     status: "verified",
     sourceFile: "evidence/public/daily-evidence-report-2026-05-24.md",
+    sourceHref: `${githubBlobBase}/evidence/public/daily-evidence-report-2026-05-24.md`,
     detail: "Refresh report for counts, exports, source scans, GitHub memory, and claim boundaries.",
   },
   {
@@ -35,6 +40,7 @@ export const evidenceSources: EvidenceSource[] = [
     publicLabel: "Codex session summary",
     status: "verified",
     sourceFile: "evidence/public/session-index-summary.md",
+    sourceHref: `${githubBlobBase}/evidence/public/session-index-summary.md`,
     detail: "Public UI shows counts only. Private evidence contents, local paths, credentials, and sensitive logs stay out of the site.",
   },
   {
@@ -44,6 +50,7 @@ export const evidenceSources: EvidenceSource[] = [
     publicLabel: "GitHub Source Memory",
     status: "verified",
     sourceFile: "evidence/public/github-profile-source-memory.md",
+    sourceHref: `${githubBlobBase}/evidence/public/github-profile-source-memory.md`,
     href: "https://github.com/zrt219",
     detail: "Public-only fallback snapshot for zrt219 repositories and homepage links.",
   },

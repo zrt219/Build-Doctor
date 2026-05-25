@@ -25,7 +25,7 @@ export function EvidenceLedger() {
 
       <div className="mt-5 grid gap-3">
         {evidenceSources.map((source) => (
-          <article key={source.id} className="grid gap-3 rounded-md border border-line bg-black/30 p-4 md:grid-cols-[0.62fr_0.28fr_0.2fr] md:items-center">
+          <article key={source.id} className="grid gap-3 rounded-md border border-line bg-black/30 p-4 transition hover:border-cyan/45 hover:bg-black/40 md:grid-cols-[0.62fr_0.28fr_0.28fr] md:items-center">
             <div>
               <p className="font-mono text-xs text-cyan">{source.type}</p>
               <h3 className="mt-1 font-semibold text-white">{source.label}</h3>
@@ -34,6 +34,11 @@ export function EvidenceLedger() {
             <p className="rounded-sm border border-dashed border-cyan/30 bg-cyan/5 px-2 py-1 text-xs text-slate-300">{source.publicLabel}</p>
             <div className="flex flex-wrap items-center gap-2 md:justify-end">
               <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${statusClass[source.status]}`}>{source.status}</span>
+              {source.sourceHref ? (
+                <a href={source.sourceHref} target="_blank" rel="noreferrer" className={compactLinkClass} aria-label={`Open public-safe source file for ${source.label}`}>
+                  Source file <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+              ) : null}
               {source.href ? (
                 <a href={source.href} target="_blank" rel="noreferrer" className={compactLinkClass} aria-label={`Open ${source.label}`}>
                   Open <ExternalLink className="h-4 w-4" aria-hidden="true" />

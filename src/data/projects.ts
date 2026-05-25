@@ -23,12 +23,165 @@ export type PortfolioProjectRecord = {
   urlKind?: "live-demo" | "repo" | "reference" | "external";
   featured?: boolean;
   signature?: boolean;
+  proofBriefSlug?: string;
+  signatureDetails?: SignatureProjectDetails;
 };
 
 export const projectsLastUpdated = "2026-05-24";
 export const projectsSourceLabel = "github-profile-source-memory.md + May 24 evidence report";
 
-const projectRecords: Omit<PortfolioProjectRecord, "evidenceRefs" | "lastVerified" | "confidence" | "urlKind">[] = [
+export type SignatureProjectDetails = {
+  slug: string;
+  headline: string;
+  purpose: string;
+  proofSummary: string;
+  proofPoints: Array<{
+    label: string;
+    detail: string;
+  }>;
+  evidenceSources: Array<{
+    label: string;
+    detail: string;
+    href?: string;
+  }>;
+  qaStatus: Array<{
+    label: string;
+    result: string;
+  }>;
+  limitations: string[];
+};
+
+const githubBlobBase = "https://github.com/zrt219/Zhanes-Portfolio-Vercel-/blob/master";
+
+const signatureDetailsById: Record<string, SignatureProjectDetails> = {
+  "evidence-dashboard": {
+    slug: "evidence-dashboard",
+    headline: "A public proof surface for AI engineering evidence and claim grounding.",
+    purpose: "Organizes project proof, public-safe documentation, source labels, and portfolio evidence into a single inspection surface.",
+    proofSummary: "Best starting point for understanding the evidence system behind the portfolio.",
+    proofPoints: [
+      { label: "Evidence architecture", detail: "Shows how work artifacts, project links, and proof-safe summaries can be organized without exposing raw private logs." },
+      { label: "Claim discipline", detail: "Positions source labels and public-safe documentation ahead of unsupported portfolio language." },
+      { label: "Portfolio integration", detail: "Serves as the signature proof system linked from the mainframe, README, and featured project grid." },
+    ],
+    evidenceSources: [
+      { label: "Public demo", detail: "Live Vercel surface for the Evidence Dashboard.", href: "https://zhane-grey-evidence-dashboard.vercel.app" },
+      { label: "Public repository", detail: "AI-Engineering-Evidence-Engine source repository.", href: "https://github.com/zrt219/AI-Engineering-Evidence-Engine" },
+      { label: "GitHub source memory", detail: "Public-safe repository/source snapshot used by the mainframe.", href: `${githubBlobBase}/evidence/public/github-profile-source-memory.md` },
+    ],
+    qaStatus: [
+      { label: "Production link", result: "Live demo linked from featured card and README." },
+      { label: "Mainframe role", result: "Pinned as the signature proof surface." },
+      { label: "Privacy boundary", result: "Uses public-safe descriptions and links only." },
+    ],
+    limitations: [
+      "This brief does not expose raw local evidence, private paths, private prompts, or session logs.",
+      "Claims are intentionally scoped to visible project proof and public-safe source summaries.",
+    ],
+  },
+  "build-doctor": {
+    slug: "build-doctor",
+    headline: "A deterministic diagnostic workflow for failed Vercel and Next.js builds.",
+    purpose: "Turns pasted build logs into redacted, traceable diagnostic reports with root cause, evidence lines, safe patch draft, and exportable incident markdown.",
+    proofSummary: "Shows developer-tool product thinking around failure analysis, redaction, deterministic rules, optional model review, and test coverage.",
+    proofPoints: [
+      { label: "Deterministic diagnosis", detail: "Classifies build failures through local rules before optional provider review is considered." },
+      { label: "Secret-safe workflow", detail: "Redacts sensitive values before report generation or optional external enrichment." },
+      { label: "Operational QA", detail: "Covered by unit tests, Playwright workflow tests, audit checks, and production health endpoints." },
+    ],
+    evidenceSources: [
+      { label: "Build Doctor app", detail: "Live diagnostic workflow route.", href: "https://vercel-build-doctor-agent.vercel.app/build-doctor" },
+      { label: "Public repository", detail: "Build Doctor source repository.", href: "https://github.com/zrt219/Build-Doctor" },
+      { label: "Public health endpoint", detail: "Production readiness response for the deterministic demo.", href: "https://vercel-build-doctor-agent.vercel.app/api/health" },
+    ],
+    qaStatus: [
+      { label: "Unit coverage", result: "Vitest suite covers deterministic diagnosis behavior." },
+      { label: "Browser workflow", result: "Playwright covers the five-step Build Doctor flow." },
+      { label: "Production", result: "Deployed to Vercel production with health checks." },
+    ],
+    limitations: [
+      "Optional LLM enrichment is not the source of truth and can be disabled or rate-limited.",
+      "Demo fixtures are labeled as deterministic demo behavior, not production incident history.",
+    ],
+  },
+  "resume-evidence-rag-auditor": {
+    slug: "resume-evidence-rag-auditor",
+    headline: "A resume-claim audit surface for evidence-grounded RAG and eval discipline.",
+    purpose: "Checks resume-style claims against project evidence and highlights unsupported or weak wording before it becomes public copy.",
+    proofSummary: "Shows how retrieval, evaluation, and claim boundaries can be presented as a practical product workflow.",
+    proofPoints: [
+      { label: "Claim grounding", detail: "Connects portfolio language to supporting project evidence instead of relying on broad assertions." },
+      { label: "RAG/eval UX", detail: "Frames retrieval and evaluation as an inspectable workflow for documentation quality." },
+      { label: "Public-safe writing", detail: "Supports the broader mainframe rule that uncertain claims must be qualified or removed." },
+    ],
+    evidenceSources: [
+      { label: "Public demo", detail: "Live Resume Evidence RAG Auditor app.", href: "https://resume-evidence-rag-auditor.vercel.app" },
+      { label: "Public repository", detail: "Resume Evidence RAG Auditor source repository.", href: "https://github.com/zrt219/resume-evidence-rag-auditor" },
+      { label: "Daily evidence report", detail: "Public-safe evidence refresh summary.", href: `${githubBlobBase}/evidence/public/daily-evidence-report-2026-05-24.md` },
+    ],
+    qaStatus: [
+      { label: "Project status", result: "Live public demo and repository linked from the mainframe." },
+      { label: "Evidence boundary", result: "Presented as claim-audit work, not as unsupported hiring claims." },
+      { label: "Mainframe coverage", result: "Included in featured proof systems and searchable directory." },
+    ],
+    limitations: [
+      "The proof brief does not include private resume artifacts or raw local documents.",
+      "The brief describes the public project role and does not claim production customer usage.",
+    ],
+  },
+  "ai-gateway-failover": {
+    slug: "ai-gateway-failover",
+    headline: "A provider-routing playground for AI gateway fallback and observability thinking.",
+    purpose: "Simulates provider routing, fallback paths, latency budgets, outage handling, and trace-style AI infrastructure decisions.",
+    proofSummary: "Shows applied AI infrastructure design through a small, inspectable product surface.",
+    proofPoints: [
+      { label: "Fallback architecture", detail: "Models how AI systems should continue gracefully when a provider is slow, unavailable, or over budget." },
+      { label: "Traceability", detail: "Presents routing and request behavior as observable product state." },
+      { label: "Product clarity", detail: "Turns infrastructure tradeoffs into a usable demo instead of a hidden backend note." },
+    ],
+    evidenceSources: [
+      { label: "Public demo", detail: "Live AI Gateway Failover Playground.", href: "https://ai-gateway-failover-playground.vercel.app" },
+      { label: "Public repository", detail: "AI Gateway Failover source repository.", href: "https://github.com/zrt219/ai-gateway-failover-playground" },
+      { label: "GitHub source memory", detail: "Public-safe repository/source snapshot.", href: `${githubBlobBase}/evidence/public/github-profile-source-memory.md` },
+    ],
+    qaStatus: [
+      { label: "Project status", result: "Live public demo and repository linked from the mainframe." },
+      { label: "Mainframe category", result: "Grouped under AI / Agentic Systems." },
+      { label: "Proof boundary", result: "Described as a playground and simulation, not production traffic." },
+    ],
+    limitations: [
+      "The public brief does not claim real provider uptime, paid traffic, or production SLA history.",
+      "Routing behavior is positioned as a demonstration of infrastructure design patterns.",
+    ],
+  },
+  "enterprise-workflow": {
+    slug: "enterprise-workflow",
+    headline: "An approval-gated agent workflow studio for risk-aware AI system design.",
+    purpose: "Shows how agent workflows can include approval gates, risk scoring, audit handoff, and review checkpoints before actions proceed.",
+    proofSummary: "Demonstrates governance patterns for agentic workflows without claiming enterprise deployment.",
+    proofPoints: [
+      { label: "Agent workflow design", detail: "Models multi-step agent flows with explicit handoff and review checkpoints." },
+      { label: "Governance UX", detail: "Makes risk scoring and approval gates visible instead of burying them in backend logic." },
+      { label: "Audit posture", detail: "Frames agent outputs as reviewable artifacts rather than automatic truth." },
+    ],
+    evidenceSources: [
+      { label: "Public demo", detail: "Live Enterprise Agent Workflow Studio.", href: "https://enterprise-agent-workflow-studio.vercel.app" },
+      { label: "Public repository", detail: "Enterprise Agent Workflow Studio source repository.", href: "https://github.com/zrt219/enterprise-agent-workflow-studio" },
+      { label: "Daily evidence report", detail: "Public-safe evidence refresh summary.", href: `${githubBlobBase}/evidence/public/daily-evidence-report-2026-05-24.md` },
+    ],
+    qaStatus: [
+      { label: "Project status", result: "Live public demo and repository linked from the mainframe." },
+      { label: "Mainframe category", result: "Grouped under AI / Agentic Systems." },
+      { label: "Proof boundary", result: "Described as a workflow studio, not enterprise customer deployment." },
+    ],
+    limitations: [
+      "The public brief does not claim production enterprise adoption or private customer data.",
+      "Approval and risk concepts are presented as product-system patterns unless separately verified.",
+    ],
+  },
+};
+
+const projectRecords: Omit<PortfolioProjectRecord, "evidenceRefs" | "lastVerified" | "confidence" | "urlKind" | "proofBriefSlug" | "signatureDetails">[] = [
   {
     id: "evidence-dashboard",
     title: "Zhane Grey Evidence Dashboard",
@@ -335,7 +488,15 @@ export const projects: PortfolioProjectRecord[] = projectRecords.map((project) =
   lastVerified: projectsLastUpdated,
   confidence: confidenceForStatus(project.proofStatus),
   urlKind: urlKindForProject(project),
+  proofBriefSlug: signatureDetailsById[project.id]?.slug,
+  signatureDetails: signatureDetailsById[project.id],
 }));
 
 export const projectCategories = Array.from(new Set(projects.map((project) => project.category)));
 export const featuredProjects = projects.filter((project) => project.featured);
+export const signatureProjects = projects.filter((project) => project.signatureDetails);
+export const signatureProjectSlugs = signatureProjects.map((project) => project.proofBriefSlug).filter(Boolean);
+
+export function getSignatureProjectBySlug(slug: string) {
+  return signatureProjects.find((project) => project.proofBriefSlug === slug);
+}

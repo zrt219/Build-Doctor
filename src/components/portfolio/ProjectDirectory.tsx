@@ -1,11 +1,12 @@
 "use client";
 
 import { ExternalLink, RotateCcw, Search, X } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { projectCategories, projects } from "@/data/projects";
 import { compactLinkClass, proofActionLabel, proofStatusClass, proofStatusLabel, sectionShellClass } from "./shared";
 
-const filters = ["All", ...projectCategories, "Public demo", "GitHub repo", "Local evidence"];
+const filters = ["All", "Proof brief", ...projectCategories, "Public demo", "GitHub repo", "Local evidence"];
 
 export function ProjectDirectory() {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -19,6 +20,7 @@ export function ProjectDirectory() {
     return projects.filter((project) => {
       const filterMatch =
         activeFilter === "All" ||
+        (activeFilter === "Proof brief" && Boolean(project.proofBriefSlug)) ||
         project.category === activeFilter ||
         (activeFilter === "Public demo" && project.proofStatus === "live" && Boolean(project.demoUrl)) ||
         (activeFilter === "GitHub repo" && Boolean(project.githubUrl)) ||
@@ -38,6 +40,9 @@ export function ProjectDirectory() {
           project.githubUrl ? "GitHub repo public source" : "source pending",
           project.demoUrl ? "project URL demo reference" : "",
           project.evidenceRefs.join(" "),
+          project.proofBriefSlug ? "signature proof brief project deep dive" : "",
+          project.signatureDetails?.headline ?? "",
+          project.signatureDetails?.proofSummary ?? "",
         ]
           .join(" ")
           .toLowerCase()
@@ -73,7 +78,7 @@ export function ProjectDirectory() {
             suppressHydrationWarning
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search projects, stacks, proof"
+            placeholder="Search projects, stacks, proof briefs"
             className="min-h-11 w-full rounded-md border border-line bg-black/35 py-2 pl-10 pr-11 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan/70"
           />
           {hasActiveSearch ? (
@@ -97,7 +102,7 @@ export function ProjectDirectory() {
             onClick={() => setActiveFilter(filter)}
             aria-pressed={activeFilter === filter}
             className={`min-h-10 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.1em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan ${
-              activeFilter === filter ? "border-cyan/70 bg-cyan/15 text-white" : "border-line bg-black/25 text-slate-300 hover:border-cyan/60 hover:text-white"
+              activeFilter === filter ? "border-cyan/80 bg-cyan/20 text-white shadow-[0_0_0_1px_rgba(109,216,255,0.18)]" : "border-line bg-black/25 text-slate-300 hover:border-cyan/60 hover:bg-cyan/10 hover:text-white"
             }`}
           >
             {filter}
@@ -118,7 +123,7 @@ export function ProjectDirectory() {
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-black/20 px-3 py-2">
         <p className="text-sm font-semibold text-slate-200" aria-live="polite">
-          {filteredProjects.length} of {projects.length} projects shown
+          Showing {filteredProjects.length} of {projects.length} proof-backed projects
         </p>
         <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.1em] text-slate-400">
           <span className="rounded-full border border-line bg-black/25 px-2 py-1">Filter: {activeFilter}</span>
@@ -149,6 +154,11 @@ export function ProjectDirectory() {
               ))}
             </div>
             <div className="flex flex-wrap gap-2 lg:justify-end">
+              {project.proofBriefSlug ? (
+                <Link href={`/projects/${project.proofBriefSlug}`} className={compactLinkClass} aria-label={`View proof brief for ${project.title}`}>
+                  Proof brief
+                </Link>
+              ) : null}
               {project.demoUrl ? (
                 <a href={project.demoUrl} target="_blank" rel="noreferrer" className={compactLinkClass} aria-label={`${proofActionLabel(project.proofStatus)} for ${project.title}`}>
                   {proofActionLabel(project.proofStatus)} <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -167,8 +177,8 @@ export function ProjectDirectory() {
           </article>
         )) : (
           <div className="rounded-md border border-dashed border-line bg-black/25 p-6 text-center">
-            <p className="font-semibold text-white">No project matches this filter.</p>
-            <p className="mt-2 text-sm text-slate-400">Clear the search or reset filters to keep browsing verified public projects.</p>
+            <p className="font-semibold text-white">No project matches these controls.</p>
+            <p className="mt-2 text-sm text-slate-400">Try a broader term like RAG, Vercel, Solidity, agent, proof brief, or reset filters to keep browsing public-safe project evidence.</p>
             <button type="button" onClick={resetDirectory} className={`${compactLinkClass} mt-4`}>
               Reset project directory
             </button>

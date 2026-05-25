@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { featuredProjects } from "@/data/projects";
 import { compactLinkClass, primaryLinkClass, proofActionLabel, proofStatusClass, proofStatusLabel, sectionShellClass } from "./shared";
 
@@ -16,7 +17,12 @@ export function FeaturedProofGrid() {
       </div>
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
         {featuredProjects.map((project) => (
-          <article key={project.id} className={`rounded-md border p-5 transition hover:-translate-y-0.5 hover:border-cyan/70 ${project.signature ? "border-cyan/70 bg-cyan/10 shadow-glow lg:col-span-2" : "border-line bg-black/30"}`}>
+          <article
+            key={project.id}
+            className={`rounded-md border p-5 transition hover:-translate-y-0.5 hover:border-cyan/70 ${
+              project.signature ? "border-cyan/70 bg-cyan/10 shadow-glow lg:col-span-2" : "border-line bg-black/30 hover:bg-black/40"
+            }`}
+          >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="font-mono text-xs text-cyan">{project.category}</p>
@@ -36,8 +42,13 @@ export function FeaturedProofGrid() {
               ))}
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
+              {project.proofBriefSlug ? (
+                <Link href={`/projects/${project.proofBriefSlug}`} className={project.signature ? primaryLinkClass : compactLinkClass} aria-label={`View proof brief for ${project.title}`}>
+                  View proof brief
+                </Link>
+              ) : null}
               {project.demoUrl ? (
-                <a href={project.demoUrl} target="_blank" rel="noreferrer" className={project.signature ? primaryLinkClass : compactLinkClass}>
+                <a href={project.demoUrl} target="_blank" rel="noreferrer" className={compactLinkClass}>
                   {proofActionLabel(project.proofStatus)} <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </a>
               ) : null}

@@ -30,7 +30,7 @@ export function TopCommandNav() {
             <a
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-cyan/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
+              className="rounded-md border border-transparent px-3 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan/40 hover:bg-cyan/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
             >
               {item.label}
             </a>
@@ -62,7 +62,7 @@ export function TopCommandNav() {
           <a
             key={item.href}
             href={item.href}
-            className="shrink-0 rounded-full border border-line bg-black/25 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
+            className="shrink-0 rounded-full border border-line bg-black/25 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-slate-300 transition hover:border-cyan/50 hover:bg-cyan/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
           >
             {item.label}
           </a>

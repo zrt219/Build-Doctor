@@ -181,7 +181,7 @@ test("filters project directory and preserves proof-status semantics", async ({ 
 
   await page.getByRole("button", { name: "Web3 / Solidity / Foundry" }).click();
   await expect(page.getByRole("button", { name: "Web3 / Solidity / Foundry" })).toHaveAttribute("aria-pressed", "true");
-  await expect(projectSection.getByText(/projects shown/i)).toBeVisible();
+  await expect(projectSection.getByText(/proof-backed projects/i)).toBeVisible();
   await expect(projectSection.getByRole("heading", { name: "DatumX" })).toBeVisible();
   await expect(projectSection.getByRole("heading", { name: "Vercel Build Doctor Agent" })).toHaveCount(0);
 
@@ -193,10 +193,16 @@ test("filters project directory and preserves proof-status semantics", async ({ 
   await page.getByLabel("Search projects").fill("gateway");
   await page.getByRole("button", { name: "All" }).click();
   await expect(projectSection.getByRole("heading", { name: "AI Gateway Failover Playground" })).toBeVisible();
+  await expect(projectSection.getByRole("link", { name: /View proof brief for AI Gateway Failover Playground/i })).toHaveAttribute("href", "/projects/ai-gateway-failover");
   await expect(projectSection.getByRole("heading", { name: "DatumX" })).toHaveCount(0);
   await expect(projectSection.getByText("Search: gateway")).toBeVisible();
   await page.getByRole("button", { name: "Clear project search" }).click();
   await expect(page.getByLabel("Search projects")).toHaveValue("");
+  await page.getByRole("button", { name: "Proof brief" }).click();
+  await expect(projectSection.getByRole("heading", { name: "Zhane Grey Evidence Dashboard" })).toBeVisible();
+  await expect(projectSection.getByRole("heading", { name: "Enterprise Agent Workflow Studio" })).toBeVisible();
+  await expect(projectSection.getByRole("heading", { name: "DatumX" })).toHaveCount(0);
+  await page.getByRole("button", { name: "All" }).click();
   await page.getByLabel("Search projects").fill("local evidence");
   await expect(projectSection.getByRole("heading", { name: "UO2X / Nuclear Frontier" })).toBeVisible();
   await page.getByRole("button", { name: "Reset filters" }).click();
@@ -210,6 +216,73 @@ test("filters project directory and preserves proof-status semantics", async ({ 
 
   await expect(page.getByText("Last refreshed 2026-05-24")).toBeVisible();
   await expect(page.getByText("Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.")).toBeVisible();
+});
+
+test("opens signature proof briefs from featured cards and command palette", async ({ page }) => {
+  await page.goto("/");
+
+  const featuredSection = page.locator("#featured-projects");
+  await expect(featuredSection.getByRole("link", { name: /View proof brief for Zhane Grey Evidence Dashboard/i })).toHaveAttribute("href", "/projects/evidence-dashboard");
+  await expect(featuredSection.getByRole("link", { name: /View proof brief for Vercel Build Doctor Agent/i })).toHaveAttribute("href", "/projects/build-doctor");
+  await expect(featuredSection.getByRole("link", { name: /View proof brief for Resume Evidence RAG Auditor/i })).toHaveAttribute("href", "/projects/resume-evidence-rag-auditor");
+
+  await page.keyboard.press("ControlOrMeta+K");
+  await page.getByLabel("Search commands").fill("gateway proof");
+  await expect(page.getByRole("dialog", { name: "Portfolio command palette" }).getByRole("link", { name: /AI Gateway Failover Playground proof brief/i })).toHaveAttribute("href", "/projects/ai-gateway-failover");
+});
+
+test("renders each signature proof page as a public-safe project brief", async ({ page }) => {
+  const briefs = [
+    { slug: "evidence-dashboard", title: "Zhane Grey Evidence Dashboard", expectedLink: "https://zhane-grey-evidence-dashboard.vercel.app" },
+    { slug: "build-doctor", title: "Vercel Build Doctor Agent", expectedLink: "https://vercel-build-doctor-agent.vercel.app/build-doctor" },
+    { slug: "resume-evidence-rag-auditor", title: "Resume Evidence RAG Auditor", expectedLink: "https://resume-evidence-rag-auditor.vercel.app" },
+    { slug: "ai-gateway-failover", title: "AI Gateway Failover Playground", expectedLink: "https://ai-gateway-failover-playground.vercel.app" },
+    { slug: "enterprise-workflow", title: "Enterprise Agent Workflow Studio", expectedLink: "https://enterprise-agent-workflow-studio.vercel.app" },
+  ];
+
+  for (const brief of briefs) {
+    await page.goto(`/projects/${brief.slug}`);
+    await expect(page.getByRole("heading", { level: 1, name: brief.title })).toBeVisible();
+    await expect(page.getByText("Signature proof brief")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Current proof state." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Boundaries stay visible." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Open the proof trail." })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Open demo/i })).toHaveAttribute("href", brief.expectedLink);
+    await expect(page.getByRole("link", { name: /Back to featured systems/i })).toHaveAttribute("href", "/#featured-projects");
+
+    const visibleText = await page.locator("body").innerText();
+    expect(visibleText).not.toMatch(/C:\\Users\\|AFTER DIARY QUEEN|Documents\\/i);
+    expect(visibleText).not.toMatch(/employer-facing portfolio|built for recruiters|recruiter-facing|reviewer-facing/i);
+  }
+});
+
+test("links evidence ledger source files to public GitHub blobs", async ({ page }) => {
+  await page.goto("/#evidence-ledger");
+
+  const ledger = page.locator("#evidence-ledger");
+  await expect(ledger.getByRole("link", { name: /Open public-safe source file for Workflow events tracker/i })).toHaveAttribute(
+    "href",
+    "https://github.com/zrt219/Zhanes-Portfolio-Vercel-/blob/master/evidence/public/live-workflow-events-tracker.md",
+  );
+  await expect(ledger.getByRole("link", { name: /Open public-safe source file for Daily evidence report/i })).toHaveAttribute(
+    "href",
+    "https://github.com/zrt219/Zhanes-Portfolio-Vercel-/blob/master/evidence/public/daily-evidence-report-2026-05-24.md",
+  );
+  await expect(ledger.getByRole("link", { name: /Open public-safe source file for Codex session summary/i })).toHaveAttribute(
+    "href",
+    "https://github.com/zrt219/Zhanes-Portfolio-Vercel-/blob/master/evidence/public/session-index-summary.md",
+  );
+});
+
+test("keeps signature proof pages mobile-readable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/projects/build-doctor");
+
+  await expect(page.getByRole("heading", { level: 1, name: "Vercel Build Doctor Agent" })).toBeVisible();
+  const hasHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  expect(hasHorizontalOverflow).toBe(false);
+  await expect(page.getByRole("link", { name: /Open demo/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /GitHub repo/i })).toBeVisible();
 });
 
 test("keeps outbound links and email CTA public-safe", async ({ page }) => {

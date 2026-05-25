@@ -3,6 +3,7 @@
 import { ArrowRight, Command, ExternalLink, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { signatureProjects } from "@/data/projects";
 
 const actions = [
   { label: "View GitHub", description: "Open zrt219 public GitHub profile.", href: "https://github.com/zrt219", external: true },
@@ -13,6 +14,11 @@ const actions = [
   { label: "Open Evidence Dashboard", description: "Open the signature evidence system.", href: "https://zhane-grey-evidence-dashboard.vercel.app", external: true },
   { label: "Review Ralphplan Workflow", description: "Jump to the planning and verification loop.", href: "#ralphplan-workflow" },
   { label: "Open Evidence Ledger", description: "Inspect public-safe source labels and health routes.", href: "#evidence-ledger" },
+  ...signatureProjects.map((project) => ({
+    label: `${project.title} proof brief`,
+    description: project.signatureDetails?.headline ?? "Open signature project proof brief.",
+    href: `/projects/${project.proofBriefSlug!}`,
+  })),
 ];
 
 export function CommandPalette() {
@@ -86,7 +92,11 @@ export function CommandPalette() {
       return actions;
     }
 
-    return actions.filter((action) => `${action.label} ${action.description}`.toLowerCase().includes(normalized));
+    const terms = normalized.split(/\s+/).filter(Boolean);
+    return actions.filter((action) => {
+      const searchable = `${action.label} ${action.description}`.toLowerCase();
+      return terms.every((term) => searchable.includes(term));
+    });
   }, [query]);
 
   return (
