@@ -21,7 +21,7 @@ export const evidenceSources: EvidenceSource[] = [
     status: "verified",
     sourceFile: "evidence/public/live-workflow-events-tracker.md",
     sourceHref: `${githubBlobBase}/evidence/public/live-workflow-events-tracker.md`,
-    detail: "Stores the May 23 to May 24 workflow-event history and current Codex session counts.",
+    detail: "Stores the May 23 to May 26 workflow-event history, current Codex session counts, and the latest audit-validation refresh.",
   },
   {
     id: "daily-report",

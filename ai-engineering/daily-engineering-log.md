@@ -393,3 +393,12 @@
 - Verification performed: `npm run typecheck`, `npm test` (32 tests), `npm run build`, `npm run test:e2e` (21 tests), local production restart on port 3017, and Chromium geometry sampling confirming handle/rail node alignment during and after drag with zero console errors.
 - Evidence/files: `src/components/portfolio/LiveWorkflowEventsChart.tsx`, `e2e/build-doctor.spec.ts`.
 - Resume-safe bullet: Refined an interactive evidence telemetry chart so drag preview movement remains smooth while the active handle and rail stay aligned to verified data nodes, backed by browser geometry checks and E2E regression coverage.
+
+## 2026-05-26 - Verified Engineering Work
+
+- Built/changed: Refreshed Build Doctor's generated audit evidence by rerunning the deterministic premium, security, and report automation, updating the tracked audit summaries to the current verification timestamp, and confirming the deployed Vercel site still matches the local proof state.
+- Systems involved: Build Doctor audit harness, `audit-results/` generated proof data, Vercel production `/build-doctor`, `/api/health`, `/api/eval`, and `/api/integration-health`.
+- Technical skills demonstrated: deterministic audit regeneration, production smoke verification, API contract validation, evidence-refresh discipline, deployment-state confirmation.
+- Verification performed: `npm run audit:45k` (45,000/45,000), `npm run audit:security` (4,000/4,000), `npm run audit:report`, production `/build-doctor` HTTP 200, production `/api/health` READY with eval score 100, production `/api/eval` 16/16 passing, production `/api/integration-health` READY with `SUPABASE_REST`.
+- Evidence/files: `audit-results/summary.json`, `audit-results/security-summary.json`, `ai-engineering/daily-engineering-log.md`, production URL `https://vercel-build-doctor-agent.vercel.app`, production Build Doctor URL `https://vercel-build-doctor-agent.vercel.app/build-doctor`.
+- Resume-safe bullet: Refreshed Build Doctor's generated audit evidence, reran the deterministic 45,000-check and 4,000-check security automation, and confirmed the deployed Vercel app's health, eval, and integration endpoints still match the verified local proof state.

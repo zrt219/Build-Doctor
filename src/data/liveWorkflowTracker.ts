@@ -1,16 +1,16 @@
 import type { LiveWorkflowTrackerSnapshot } from "@/types/liveWorkflowTracker";
 
 export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
-  lastRefreshed: "2026-05-24",
+  lastRefreshed: "2026-05-26",
   codexMode: "full",
   currentWorkflowEvents: 1160551,
-  currentDelta: 24718,
+  currentDelta: 0,
   sessionIndexRows: 757,
   uniqueThreadIds: 757,
   jsonlFiles: 757,
   corpusSizeGb: 34.1,
   sourceCodeLines: 600493,
-  sessionsUpdatedToday: 44,
+  sessionsUpdatedToday: 0,
   localSessionLogs: 757,
   portfolioStatsRefreshed: true,
   publicGitHubReposScanned: 22,
@@ -18,7 +18,7 @@ export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
   foundryProjectsFound: 18,
   aiRagAgentFilesFound: 12891,
   generatedExports: 8,
-  sourceLabel: "Last refreshed by local evidence pipeline.",
+  sourceLabel: "Last refreshed by audit evidence validation; workflow counts remain pinned to the May 24 local evidence pipeline.",
   privacyNote: "Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.",
   history: [
     {
@@ -35,6 +35,13 @@ export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
       sessionRows: 757,
       label: "May 24 evidence refresh",
     },
+    {
+      date: "2026-05-26",
+      workflowEvents: 1160551,
+      dailyDelta: 0,
+      sessionRows: 757,
+      label: "May 26 audit validation",
+    },
   ],
   evidenceSources: [
     {
@@ -42,12 +49,12 @@ export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
       label: "Workflow Events Tracker",
       sourceType: "markdown-tracker",
       publicSafeLabel: "Public-safe tracker summary",
-      lastRefreshed: "2026-05-24",
+      lastRefreshed: "2026-05-26",
       confidence: "high",
       privatePathRedacted: true,
       supports: [
         "current workflow events",
-        "daily delta",
+        "audit validation point",
         "session rows",
         "JSONL file count",
         "corpus size",
@@ -60,12 +67,12 @@ export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
       label: "Daily Evidence Report",
       sourceType: "daily-report",
       publicSafeLabel: "Public-safe daily refresh summary",
-      lastRefreshed: "2026-05-24",
+      lastRefreshed: "2026-05-26",
       confidence: "high",
       privatePathRedacted: true,
       supports: [
         "Codex sessions found",
-        "sessions updated today",
+        "audit refresh status",
         "public GitHub repos scanned",
         "generated exports",
         "workspace scan confidence labels",
@@ -76,7 +83,7 @@ export const liveWorkflowTrackerSnapshot: LiveWorkflowTrackerSnapshot = {
       label: "Portfolio Stats Source",
       sourceType: "portfolio-stats-source",
       publicSafeLabel: "Typed portfolio stats data",
-      lastRefreshed: "2026-05-24",
+      lastRefreshed: "2026-05-26",
       confidence: "high",
       privatePathRedacted: true,
       supports: ["public stat synchronization", "safe public labels", "privacy boundary copy"],

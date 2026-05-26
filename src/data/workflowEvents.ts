@@ -8,7 +8,7 @@ export type WorkflowEventPoint = {
   note?: string;
 };
 
-export const workflowEventsLastUpdated = "2026-05-24";
+export const workflowEventsLastUpdated = "2026-05-26";
 export const workflowEventsSourceLabel = "Workflow Events Tracker";
 export const workflowEventsSourceFile = "evidence/public/live-workflow-events-tracker.md";
 
@@ -29,6 +29,15 @@ export const workflowEventHistory: WorkflowEventPoint[] = [
     sessionRows: 757,
     status: "verified",
     sourceFile: workflowEventsSourceFile,
+  },
+  {
+    date: "2026-05-26",
+    workflowEvents: 1160551,
+    dailyDelta: 0,
+    sessionRows: 757,
+    status: "verified",
+    sourceFile: workflowEventsSourceFile,
+    note: "Audit validation refresh; workflow counts remain pinned until the local evidence-count pipeline is rerun.",
   },
 ];
 

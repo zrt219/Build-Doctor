@@ -97,7 +97,7 @@ test("upgrades live workflow tracker interactions and evidence drawer", async ({
   await expect(tracker.getByText("Codex session rows")).toBeVisible();
   await expect(tracker.getByText("Session index rows aligned to local session logs in the dated evidence refresh.")).toBeVisible();
   await expect(tracker.getByText("Showing Session rows")).toBeVisible();
-  await expect(tracker.getByText("2026-05-24: Session rows 757.")).toBeVisible();
+  await expect(tracker.getByText("2026-05-26: Session rows 757.")).toBeVisible();
   await expect(tracker.getByText(/757 sessions/i)).toBeVisible();
 
   await tracker.getByRole("button", { name: "Daily delta" }).click();
@@ -105,8 +105,8 @@ test("upgrades live workflow tracker interactions and evidence drawer", async ({
   await expect(tracker.getByText("daily event delta")).toBeVisible();
   await expect(tracker.getByText("Workflow-event growth compared with the previous tracker snapshot.")).toBeVisible();
   await expect(tracker.getByText("Showing Daily delta")).toBeVisible();
-  await expect(tracker.getByText("2026-05-24: Daily delta +24,718.")).toBeVisible();
-  await expect(tracker.getByText(/\+24,718 delta/i)).toBeVisible();
+  await expect(tracker.getByText("2026-05-26: Daily delta 0.")).toBeVisible();
+  await expect(tracker.getByText(/0 daily delta/i)).toBeVisible();
 
   await tracker.getByRole("button", { name: "How this works" }).click();
   const drawer = page.getByRole("dialog", { name: "Public-safe tracker sources" });
@@ -127,7 +127,7 @@ test("supports draggable tracker scrubber and public snapshot refresh", async ({
   const chart = page.locator("svg[aria-label='Workflow events draggable chart for workflow tracker history']");
   await tracker.scrollIntoViewIfNeeded();
   await expect(chart).toBeVisible();
-  await expect(tracker.getByText("2026-05-24: Workflow events 1,160,551.")).toBeVisible();
+  await expect(tracker.getByText("2026-05-26: Workflow events 1,160,551.")).toBeVisible();
 
   const chartBox = await chart.boundingBox();
   expect(chartBox).toBeTruthy();
@@ -276,7 +276,7 @@ test("filters project directory and preserves proof-status semantics", async ({ 
   expect(chartBox?.width).toBeGreaterThan(300);
   expect(chartBox?.height).toBeGreaterThan(120);
 
-  await expect(page.getByText("Last refreshed 2026-05-24")).toBeVisible();
+  await expect(page.getByText("Last refreshed 2026-05-26")).toBeVisible();
   await expect(page.getByText("Only aggregate metrics are shown. Raw logs, private paths, secrets, and local file contents are not exposed.")).toBeVisible();
 });
 
